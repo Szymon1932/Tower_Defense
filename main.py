@@ -1,6 +1,7 @@
 import pygame
 import os
 from enemies.cyber import Cyber
+from towers.attackTower import AttackTower
 class Main:
     def __init__(self):
         self.szerokosc = 1200
@@ -9,6 +10,7 @@ class Main:
         self.tlo = pygame.image.load(os.path.join("resources", "map.png"))
         self.tlo = pygame.transform.scale(self.tlo, (self.szerokosc, self.wysokosc))
         self.wrogowie = [Cyber()]
+        self.wieze_ataku=[AttackTower(100, 150)]
 
     def dzialanie(self):
         dzialanie = True
@@ -25,13 +27,20 @@ class Main:
                     wrogowie_poza_mapa.append(e)
             for e in wrogowie_poza_mapa:
                 self.wrogowie.remove(e)
-            self.draw()
+            self.rysuj()
         pygame.quit()
-    def draw(self):
+    def rysuj(self):
         self.okno.blit(self.tlo, (0, 0))
 
+
+        #rysowanie wrogów
         for e in self.wrogowie:
             e.rysuj(self.okno)
+        #rysowanie wiez ataku
+        for e in self.wieze_ataku:
+            e.rysuj(self.okno)
+
+
         pygame.display.update()
 
 main = Main()
