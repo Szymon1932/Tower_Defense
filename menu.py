@@ -20,9 +20,25 @@ class Button:
                 return True
         return False
 
-    def rysuj(self, win):
-        win.blit(self.img,(self.x,self.y))
+    def rysuj(self, okno):
+        okno.blit(self.img, (self.x, self.y))
 
+class PauzaPrzycisk(Button):
+    def __init__(self,przycisk_play,przycisk_pauza,x,y):
+        self.x = x
+        self.y = y
+        self.img = przycisk_play
+        self.szerokosc = self.img.get_width()
+        self.wysokosc = self.img.get_height()
+        self.przycisk_play = przycisk_play
+        self.przycisk_pauza = przycisk_pauza
+        self.pauza=True
+
+    def rysuj(self, okno):
+        if self.pauza:
+            okno.blit(self.przycisk_play, (self.x, self.y))
+        else:
+            okno.blit(self.przycisk_pauza, (self.x, self.y))
 
 
 class Menu:
@@ -42,13 +58,13 @@ class Menu:
         self.ilosc_przyciskow +=1
         self.przyciski.append(Button(self, img, name))
 
-    def rysuj(self, win):
-        win.blit(self.tlo, (self.x - self.tlo.get_width() / 2, self.y - 100))
+    def rysuj(self, okno):
+        okno.blit(self.tlo, (self.x - self.tlo.get_width() / 2, self.y - 100))
         for przycisk in self.przyciski:
-            przycisk.rysuj(win)
+            przycisk.rysuj(okno)
             text = self.font.render(str(self.wartosc[self.wieza.poziom]), True, (255, 255, 255))
-            win.blit(gwiazda_ulepszenie, (przycisk.x + przycisk.szerokosc + 5, przycisk.y - 8))
-            win.blit(text, (przycisk.x + przycisk.szerokosc + 30 - text.get_width() / 2, przycisk.y + gwiazda_ulepszenie.get_height() - 9))
+            okno.blit(gwiazda_ulepszenie, (przycisk.x + przycisk.szerokosc + 5, przycisk.y - 8))
+            okno.blit(text, (przycisk.x + przycisk.szerokosc + 30 - text.get_width() / 2, przycisk.y + gwiazda_ulepszenie.get_height() - 9))
 
 
     def pobierz_wartosc_obiektu(self):
