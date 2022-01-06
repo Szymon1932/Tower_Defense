@@ -1,3 +1,5 @@
+
+
 class Tower:
     def __init__(self,X,Y):
         self.x=X
@@ -7,16 +9,17 @@ class Tower:
         self.poziom = 0
         self.klatki = []
         self.obrazenia = 1
-        self.place_color = (0,0,255,100)
+        self.czy_wybrano = False
 
     def rysuj(self, win):
-        """
-        draws the tower
-        :param win: surface
-        :return: None
-        """
         img= self.klatki[self.poziom]
-        win.blit(img, (self.x-img.get_width()//2, self.y-img.get_height()//2,))
+        win.blit(img, (self.x-img.get_width()//2, self.y-img.get_height()//2))
 
 
+    def click(self, X, Y):
+        obiekt = self.klatki[self.poziom]
+        if  X >= self.x - obiekt.get_width() // 2 and X <= self.x - obiekt.get_width() // 2 + self.szerokosc:  #kiedy klik w obszarze wiezy
+            if  Y >= self.y - obiekt.get_height() // 2 and Y <= self.y - obiekt.get_height() // 2 + self.wysokosc:
+                return True
+        return False
 

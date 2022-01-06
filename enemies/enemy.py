@@ -1,6 +1,6 @@
 import pygame
 import math
-
+import os
 
 class Enemy:
 
@@ -8,16 +8,15 @@ class Enemy:
         self.szerokosc = 64
         self.wysokosc = 64
         self.aktualne_zdrowie = 1
-        self.maksymalne_zdrowie = 1
+        self.maksymalne_zdrowie = 0
         self.sciezka = [(-10, 225), (19, 221), (316, 226), (316, 359), (695, 356), (696, 141), (984, 146), (986, 674), (811, 677), (808, 488), (374, 505), (333, 477),(12, 479), (-25, 479)]
         self.aktualna_sciezka = 0
         self.x = self.sciezka[0][0]
         self.y = self.sciezka[0][1]
-        self.klatka = None
+        self.klatka = pygame.image.load(os.path.join("resources/enemies/cyber","00.png"))
         self.klatki = []
         self.aktualna_klatka = 0
         self.czy_obrocony = False
-        self.dis = 0
 
     def pokaz_zdrowie(self, okno):
 
@@ -75,3 +74,9 @@ class Enemy:
                 if self.x <= x2 and self.y <= y2: # gdy postać pójdzie odpowiednio daleko w górę
                     self.aktualna_sciezka += 1
 
+
+    def atakuj(self, obrazenia):
+        self.aktualne_zdrowie -= obrazenia
+        if self.aktualne_zdrowie <= 0:
+            return True
+        return False

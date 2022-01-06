@@ -6,11 +6,11 @@ import pygame
 klatki = []
 
 for x in range(20):
-    add_str = str(x)
+    pom = str(x)
     if x < 10:
-        add_str = "0" + add_str
+        pom = "0" + pom
     klatki.append(pygame.transform.scale(
-        pygame.image.load(os.path.join("resources/enemies/cyber", add_str + ".png")),
+        pygame.image.load(os.path.join("resources/enemies/cyber", pom + ".png")),
         (64, 64)))
 
 
@@ -20,7 +20,8 @@ class Cyber(Enemy):
         super().__init__()
         self.nazwa = "cyber"
         self.klatki = klatki[:]
-        self.maksymalne_zdrowie = 1
-        self.zdrowie = self.maksymalne_zdrowie
+        self.maksymalne_zdrowie = 5
+        self.aktualne_zdrowie = self.maksymalne_zdrowie
         self.predkosc = 10
+        self.stan_konta=1
 
