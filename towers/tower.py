@@ -1,3 +1,12 @@
+import pygame
+import os
+from menu import Menu
+
+tlo_menu = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (150, 80))
+ulepszenie_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "upgrade.png")), (50, 50))
+
+
+
 
 
 class Tower:
@@ -10,16 +19,27 @@ class Tower:
         self.klatki = []
         self.obrazenia = 1
         self.czy_wybrano = False
+        self.menu = Menu(self, self.x, self.y, tlo_menu, 0)
 
     def rysuj(self, win):
         img= self.klatki[self.poziom]
         win.blit(img, (self.x-img.get_width()//2, self.y-img.get_height()//2))
+        if self.czy_wybrano:
+            self.menu.rysuj(win)
 
-
-    def click(self, X, Y):
+    def czy_wcisniete(self, X, Y):
         obiekt = self.klatki[self.poziom]
         if  X >= self.x - obiekt.get_width() // 2 and X <= self.x - obiekt.get_width() // 2 + self.szerokosc:  #kiedy klik w obszarze wiezy
             if  Y >= self.y - obiekt.get_height() // 2 and Y <= self.y - obiekt.get_height() // 2 + self.wysokosc:
                 return True
         return False
 
+    def ulepsz(self):
+        print(len(self.klatki))
+        if self.poziom +1 < len(self.klatki):
+            self.poziom+=1
+            self.obrazenia +=1
+            print(self.klatki)
+        else:
+            self.poziom=self.poziom
+            self.obrazenia=self.obrazenia

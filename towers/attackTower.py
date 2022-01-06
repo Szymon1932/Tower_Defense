@@ -3,18 +3,24 @@ import os
 from .tower import Tower
 import math
 
+from menu import Menu
+
 klatki_wieza_atakujaca=[]
 lucznik_klatki=[]
 synchronizacja_klatek=4
 wymiary_obrazka = 90
 
-for x in range(1, 3):  # index of towers
+menu_bg = pygame.transform.scale(pygame.image.load(os.path.join("resources","menu.png")),(150,80))
+upgrade_btn = pygame.transform.scale(pygame.image.load(os.path.join("resources","upgrade.png")),(50,50))
+
+
+for x in range(1, 4):  # index of towers
     # load towers
     klatki_wieza_atakujaca.append(pygame.transform.scale(
         pygame.image.load(os.path.join("resources/towers/attack", str(x) + ".png")),
         (wymiary_obrazka, wymiary_obrazka)))
 
-for x in range(0, 9):
+for x in range(0,10):
     lucznik_klatki.append(pygame.transform.scale(
         pygame.image.load(os.path.join("resources/towers/archer", str(x) + ".png")),
         (200, 100)))
@@ -27,10 +33,15 @@ class AttackTower(Tower):
         self.klatki=klatki_wieza_atakujaca
         self.lucznik_klatki = lucznik_klatki
         self.lucznik_klatka = 0
+        self.menu = Menu(self,self.x, self.y, menu_bg,[2000,5000,"MAX"])
+        self.menu.dodaj_nastepny_przycisk(upgrade_btn, "Ulepsz")
         self.zasieg = 200
         self.w_zasiegu = False
         self.obrazenia = 1
         self.czy_obrocony=True
+
+    def wartosc_ulepszenia(self):
+        return self.menu.pobierz_wartosc_obiektu()
 
     def rysuj(self, win):
         super().rysuj(win)
@@ -47,14 +58,14 @@ class AttackTower(Tower):
         stan_konta=0
         self.w_zasiegu = False
         wrogowie_tab = []
-        for enemy in wrogowie:
-            x = enemy.x
-            y = enemy.y
+        for w in wrogowie:
+            x = w.x
+            y = w.y
 
-            odleglosc = math.sqrt((self.x - enemy.klatka.get_width()/2-x)**2 + (self.y-enemy.klatka.get_height()/2-y)**2)
+            odleglosc = math.sqrt((self.x - w.klatka.get_width() / 2 - x) ** 2 + (self.y - w.klatka.get_height() / 2 - y) ** 2)
             if odleglosc < self.zasieg:
                 self.w_zasiegu = True
-                wrogowie_tab.append(enemy) #dodawanie najblizszego przeciwnika do tablicy do ataku
+                wrogowie_tab.append(w) #dodawanie najblizszego przeciwnika do tablicy do ataku
 
         wrogowie_tab.sort(key=lambda przeciwnik: przeciwnik.x) #sortowanie po wspolrzednej X przeciwnika. Ostatni element ma najwiekszy X
         wrogowie_tab=wrogowie_tab[::-1]

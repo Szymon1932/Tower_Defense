@@ -14,8 +14,8 @@ class Main:
         self.tlo = pygame.transform.scale(self.tlo, (self.szerokosc, self.wysokosc))
         self.wrogowie = [Cyber()]
         self.wieze_ataku=[AttackTower(100, 150)]
-        self.selected_tower = None
-        self.stan_konta=1000
+        self.wybrana_wieza = None
+        self.stan_konta=100000
 
     def dzialanie(self):
         dzialanie = True
@@ -26,15 +26,25 @@ class Main:
             for e in pygame.event.get():
                 if e.type == pygame.QUIT:
                     dzialanie = False
-
                 if e.type == pygame.MOUSEBUTTONUP:
-                    for wieza in self.wieze_ataku:
-                        if wieza.click(pos[0], pos[1]):
-                            wieza.czy_wybrano = True
-                            self.selected_tower = wieza
-                            print(wieza)
-                        else:
-                            wieza.czy_wybrano = False
+                    wybrany_element = None
+                    if self.wybrana_wieza:
+                        wybrany_element = self.wybrana_wieza.menu.wcisniecie_przyciskow_w_menu(pos[0], pos[1])
+                        if wybrany_element:
+                            if wybrany_element == 'Ulepsz':
+                                koszt = self.wybrana_wieza.wartosc_ulepszenia()
+                                print(koszt)
+                                if self.stan_konta >= koszt:
+                                    print(self.stan_konta)
+                                    self.stan_konta -= koszt
+                                    self.wybrana_wieza.ulepsz()
+                    if wybrany_element==None:
+                        for wieza in self.wieze_ataku:
+                            if wieza.czy_wcisniete(pos[0], pos[1]):
+                                wieza.czy_wybrano = True
+                                self.wybrana_wieza = wieza
+                            else:
+                                wieza.czy_wybrano = False
 
             wrogowie_poza_mapa = []
             for e in self.wrogowie:
@@ -45,8 +55,6 @@ class Main:
 
             for wieza in self.wieze_ataku:
                 self.stan_konta += wieza.atakuj(self.wrogowie)
-                x=self.stan_konta
-                print(x)
             self.rysuj()
         pygame.quit()
     def rysuj(self):
