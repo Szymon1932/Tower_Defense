@@ -1,6 +1,9 @@
 import pygame
 import os
 from enemies.cyber import Cyber
+from enemies.marshall import Marshall
+from enemies.barney import Barney
+from enemies.ted import Ted
 from towers.attackTower import AttackTower
 from menu import PauzaPrzycisk
 import time
@@ -10,7 +13,7 @@ pygame.font.init()
 
 przycisk_play = pygame.transform.scale(pygame.image.load(os.path.join("resources", "play.png")), (80, 80))
 przycisk_pauza = pygame.transform.scale(pygame.image.load(os.path.join("resources", "pause.png")), (80, 80))
-rundy=[[1], [2],[3]]
+rundy=[[1,1,1,1], [2,2,2,2],[3,3,3,3]]
 class Main:
     def __init__(self):
         self.szerokosc = 1200
@@ -19,7 +22,7 @@ class Main:
         self.tlo = pygame.image.load(os.path.join("resources", "map.png"))
         self.tlo = pygame.transform.scale(self.tlo, (self.szerokosc, self.wysokosc))
         self.wrogowie = []
-        self.wieze_ataku=[AttackTower(100, 150)]
+        self.wieze_ataku=[AttackTower(100, 150),AttackTower(100, 250)]
         self.wybrana_wieza = None
         self.stan_konta=100000
         self.pauza_przycisk = PauzaPrzycisk(przycisk_play, przycisk_pauza, self.szerokosc - przycisk_play.get_width() - 15, 15)
@@ -37,7 +40,7 @@ class Main:
                 self.obecna_runda = rundy[self.runda]
 
         else:
-            obecni_wrogowie = [Cyber()]
+            obecni_wrogowie = [Cyber(), Barney(),Marshall(),Ted()]
             for e in range(len(self.obecna_runda)):
                 if self.obecna_runda[e] != 0:
                     self.wrogowie.append(obecni_wrogowie[e])
