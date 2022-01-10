@@ -5,7 +5,7 @@ from enemies.marshall import Marshall
 from enemies.barney import Barney
 from enemies.ted import Ted
 from towers.attackTower import AttackTower
-from menu import PauzaPrzycisk
+from menu import PauzaPrzycisk, MenuGry
 import time
 import random
 
@@ -13,7 +13,14 @@ pygame.font.init()
 
 przycisk_play = pygame.transform.scale(pygame.image.load(os.path.join("resources", "play.png")), (80, 80))
 przycisk_pauza = pygame.transform.scale(pygame.image.load(os.path.join("resources", "pause.png")), (80, 80))
-rundy=[[1,1,1,1], [2,2,2,2],[3,3,3,3]]
+rundy=[[11,0,0,0],[1,0,0,0]]
+wymiar_ikony = 90
+obraz_menu = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (720, 180))
+kup_atak_1 = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_1.png")), (wymiar_ikony, wymiar_ikony))
+kup_atak_2 = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_2.png")), (wymiar_ikony, wymiar_ikony))
+kup_totem_1 = pygame.transform.scale(pygame.image.load(os.path.join("resources", "attack_totem.png")), (wymiar_ikony, wymiar_ikony))
+kup_totem_2= pygame.transform.scale(pygame.image.load(os.path.join("resources", "range_totem.png")), (wymiar_ikony, wymiar_ikony))
+
 class Main:
     def __init__(self):
         self.szerokosc = 1200
@@ -31,14 +38,23 @@ class Main:
         self.runda = 0
         self.obecna_runda= rundy[self.runda][:]
         self.czas =time.time()
-        self.zycia = 2
-    def stworzenie_wrogow(self):
+        self.zycia = 4
+        self.menu = MenuGry(obraz_menu.get_width() / 2 + 25, 675, obraz_menu)
+        self.menu.dodaj_nastepny_przycisk(kup_atak_1, "kup_atak_1", 1500)
+        self.menu.dodaj_nastepny_przycisk(kup_atak_2, "kup_atak_2", 2000)
+        self.menu.dodaj_nastepny_przycisk(kup_totem_1, "kup_totem_1", 1200)
+        self.menu.dodaj_nastepny_przycisk(kup_totem_2, "kup_totem_2", 1000)
 
+    def stworzenie_wrogow(self):
 
         if sum(self.obecna_runda) == 0:
             if len(self.wrogowie) == 0:
                 self.runda += 1
+                if self.runda >= len(rundy):
+                    print("Koniec gry")
+                    exit(0)
                 self.obecna_runda = rundy[self.runda]
+
 
         else:
             obecni_wrogowie = [Cyber(), Barney(),Marshall(),Ted()]
@@ -64,7 +80,7 @@ class Main:
                     dzialanie = False
                 if e.type == pygame.MOUSEBUTTONUP:
                     wybrany_element = None
-                    if self.wybrana_wieza:
+                    if self.wybrana_wieza: #wybrano wieze
                         wybrany_element = self.wybrana_wieza.menu.wcisniecie_przyciskow_w_menu(pos[0], pos[1])
                         if wybrany_element:
                             if wybrany_element == 'Ulepsz':
@@ -74,6 +90,7 @@ class Main:
                                     print(self.stan_konta)
                                     self.stan_konta -= koszt
                                     self.wybrana_wieza.ulepsz()
+
                     if wybrany_element==None:
                         for wieza in self.wieze_ataku:
                             if wieza.czy_wcisniete(pos[0], pos[1]):
@@ -81,6 +98,7 @@ class Main:
                                 self.wybrana_wieza = wieza
                             else:
                                 wieza.czy_wybrano = False
+
 
             wrogowie_poza_mapa = []
             for e in self.wrogowie:
@@ -94,9 +112,13 @@ class Main:
             for wieza in self.wieze_ataku:
                 self.stan_konta += wieza.atakuj(self.wrogowie)
 
+
+
             if self.zycia <=0:
                 print("Przegrana")
                 exit(0)
+
+
             self.rysuj()
         pygame.quit()
     def rysuj(self):
@@ -109,7 +131,8 @@ class Main:
             e.rysuj(self.okno)
         #rysowanie pauzy
         self.pauza_przycisk.rysuj(self.okno)
-
+        #rysowanie menu
+        self.menu.rysuj(self.okno)
         pygame.display.update()
 
 main = Main()

@@ -60,7 +60,6 @@ class Enemy:
 
         self.x += wektor[0]
         self.y += wektor[1]
-
         if wektor[0] >= 0:  # ruch w prawo
             if wektor[1] > 0:  # w dół
                 if self.x >= x2 and self.y >= y2:  # gdy postać pójdzie odpowiednio daleko w dół
