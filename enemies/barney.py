@@ -22,6 +22,6 @@ class Barney(Enemy):
         self.klatki = klatki[:]
         self.maksymalne_zdrowie = 5
         self.aktualne_zdrowie = self.maksymalne_zdrowie
-        self.predkosc = 10
+        self.predkosc = 2
         self.stan_konta=1
 

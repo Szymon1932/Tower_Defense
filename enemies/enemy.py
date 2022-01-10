@@ -9,7 +9,7 @@ class Enemy:
         self.wysokosc = 64
         self.aktualne_zdrowie = 1
         self.maksymalne_zdrowie = 0
-        self.sciezka = [(-10, 225), (19, 221), (316, 226), (316, 359), (695, 356), (696, 141), (984, 146), (986, 674), (811, 677), (808, 488), (374, 505), (333, 477),(12, 479), (-25, 479)]
+        self.sciezka = [(-10, 225), (19, 221), (313, 226), (315, 359), (695, 360), (696, 141), (984, 139), (986, 674), (811, 676), (808, 495), (374, 494), (333, 479),(12, 479), (-25, 479)]
         self.aktualna_sciezka = 0
         self.x = self.sciezka[0][0]
         self.y = self.sciezka[0][1]
@@ -17,6 +17,7 @@ class Enemy:
         self.klatki = []
         self.aktualna_klatka = 0
         self.czy_obrocony = False
+        self.predkosc = 1
 
     def pokaz_zdrowie(self, okno):
 
@@ -49,7 +50,8 @@ class Enemy:
 
         wektor = ((x2 - x1), (y2 - y1))
         dlugosc = math.sqrt(wektor[0] ** 2 + wektor[1] ** 2)
-        wektor = (wektor[0] / dlugosc, wektor[1] / dlugosc)
+        wektor = (wektor[0] / dlugosc * self.predkosc , wektor[1] / dlugosc * self.predkosc )
+
 
         if wektor[0] < 0 and not (self.czy_obrocony): #jeśli postać ruszałaby się w lewo i nie była obrócona
             self.czy_obrocony = True
@@ -60,19 +62,20 @@ class Enemy:
         self.y += wektor[1]
 
         if wektor[0] >= 0:  # ruch w prawo
-            if wektor[1] >= 0:  # w dół
+            if wektor[1] > 0:  # w dół
                 if self.x >= x2 and self.y >= y2:  # gdy postać pójdzie odpowiednio daleko w dół
                     self.aktualna_sciezka += 1
-            else:
+            elif wektor[1]<=0:
                 if self.x >= x2 and self.y <= y2: # gdy postać pójdzie odpowiednio daleko w górę
                     self.aktualna_sciezka += 1
         else:  # ruch w lewo
-            if wektor[1] >= 0:  # w dół
+            if wektor[1] > 0:  # w dół
                 if self.x <= x2 and self.y >= y2:  # gdy postać pójdzie odpowiednio daleko w dół
                     self.aktualna_sciezka += 1
-            else:
+            elif wektor[1] <= 0:
                 if self.x <= x2 and self.y <= y2: # gdy postać pójdzie odpowiednio daleko w górę
                     self.aktualna_sciezka += 1
+
 
 
     def atakuj(self, obrazenia):

@@ -22,7 +22,7 @@ class Main:
         self.tlo = pygame.image.load(os.path.join("resources", "map.png"))
         self.tlo = pygame.transform.scale(self.tlo, (self.szerokosc, self.wysokosc))
         self.wrogowie = []
-        self.wieze_ataku=[AttackTower(100, 150),AttackTower(100, 250)]
+        self.wieze_ataku=[AttackTower(100,300)]
         self.wybrana_wieza = None
         self.stan_konta=100000
         self.pauza_przycisk = PauzaPrzycisk(przycisk_play, przycisk_pauza, self.szerokosc - przycisk_play.get_width() - 15, 15)
@@ -31,6 +31,7 @@ class Main:
         self.runda = 0
         self.obecna_runda= rundy[self.runda][:]
         self.czas =time.time()
+        self.zycia = 2
     def stworzenie_wrogow(self):
 
 
@@ -85,11 +86,17 @@ class Main:
             for e in self.wrogowie:
                 if e.x<-20:
                     wrogowie_poza_mapa.append(e)
+                    self.zycia -= 1
+                    print("Aktualne zycia: "+ str(self.zycia))
             for e in wrogowie_poza_mapa:
                 self.wrogowie.remove(e)
 
             for wieza in self.wieze_ataku:
                 self.stan_konta += wieza.atakuj(self.wrogowie)
+
+            if self.zycia <=0:
+                print("Przegrana")
+                exit(0)
             self.rysuj()
         pygame.quit()
     def rysuj(self):
