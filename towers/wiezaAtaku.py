@@ -10,12 +10,11 @@ lucznik_klatki=[]
 synchronizacja_klatek=4
 wymiary_obrazka = 90
 
-menu_bg = pygame.transform.scale(pygame.image.load(os.path.join("resources","menu.png")),(150,80))
-upgrade_btn = pygame.transform.scale(pygame.image.load(os.path.join("resources","upgrade.png")),(50,50))
+menu_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (150, 80))
+przycisk_ulepszenie = pygame.transform.scale(pygame.image.load(os.path.join("resources", "upgrade.png")), (50, 50))
 
 
-for x in range(1, 4):  # index of towers
-    # load towers
+for x in range(1, 4):
     klatki_wieza_atakujaca.append(pygame.transform.scale(
         pygame.image.load(os.path.join("resources/towers/attack", str(x) + ".png")),
         (wymiary_obrazka, wymiary_obrazka)))
@@ -26,16 +25,16 @@ for x in range(0,10):
         (200, 100)))
 
 
-class AttackTower(Tower):
+class WiezaAtaku(Tower):
     def __init__(self,x,y):
         super().__init__(x,y)
         self.szerokosc=self.wysokosc=wymiary_obrazka
         self.klatki=klatki_wieza_atakujaca
         self.lucznik_klatki = lucznik_klatki
         self.lucznik_klatka = 0
-        self.menu = Menu(self,self.x, self.y, menu_bg,[2000,5000,"MAX"])
-        self.menu.dodaj_nastepny_przycisk(upgrade_btn, "Ulepsz")
-        self.zasieg = 200
+        self.menu = Menu(self, self.x, self.y, menu_tlo, [2000, 5000, "MAX"])
+        self.menu.dodaj_nastepny_przycisk(przycisk_ulepszenie, "Ulepsz")
+        self.zasieg = 300
         self.w_zasiegu = False
         self.obrazenia = 1
         self.czy_obrocony=True
@@ -43,8 +42,9 @@ class AttackTower(Tower):
     def wartosc_ulepszenia(self):
         return self.menu.pobierz_wartosc_obiektu()
 
-    def rysuj(self, win):
-        super().rysuj(win)
+    def rysuj(self, okno):
+        super().pokaz_zasieg_wiezy(okno)
+        super().rysuj(okno)
         if self.w_zasiegu:
             self.lucznik_klatka += 1
             if self.lucznik_klatka >= len(self.lucznik_klatki)*synchronizacja_klatek:
@@ -52,7 +52,7 @@ class AttackTower(Tower):
         else:
             self.lucznik_klatka = 0
         lucznik = self.lucznik_klatki[self.lucznik_klatka//synchronizacja_klatek]
-        win.blit(lucznik, ((self.x - lucznik.get_width() / 2 - 5), (self.y - lucznik.get_height()-15)))
+        okno.blit(lucznik, ((self.x - lucznik.get_width() / 2 - 5), (self.y - lucznik.get_height() - 15)))
 
     def atakuj(self, wrogowie):
         stan_konta=0
@@ -88,3 +88,32 @@ class AttackTower(Tower):
                     self.lucznik_klatki[x] = pygame.transform.flip(img, True, False)
 
         return stan_konta #zwraca stan konta po zabiciu przeciwnika
+
+
+klatki_wieza_atakujaca_2=[]
+lucznik_klatki_2=[]
+
+for x in range(0, 3):
+    klatki_wieza_atakujaca_2.append(pygame.transform.scale(
+        pygame.image.load(os.path.join("resources/towers/attack_2", str(x) + ".png")),
+        (wymiary_obrazka, wymiary_obrazka)))
+
+for x in range(0,10):
+    lucznik_klatki_2.append(pygame.transform.scale(
+        pygame.image.load(os.path.join("resources/towers/archer", str(x) + ".png")),
+        (200, 100)))
+
+
+class WiezaAtaku_2(WiezaAtaku):
+    def __init__(self,x,y):
+        super().__init__(x,y)
+        self.szerokosc=self.wysokosc=wymiary_obrazka
+        self.klatki=klatki_wieza_atakujaca_2
+        self.lucznik_klatki = lucznik_klatki_2
+        self.lucznik_klatka = 0
+        self.menu = Menu(self, self.x, self.y, menu_tlo, [2000, 5000, "MAX"])
+        self.menu.dodaj_nastepny_przycisk(przycisk_ulepszenie, "Ulepsz")
+        self.zasieg = 150
+        self.w_zasiegu = False
+        self.obrazenia = 3
+        self.czy_obrocony=True

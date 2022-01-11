@@ -20,7 +20,7 @@ class Tower:
         self.obrazenia = 1
         self.czy_wybrano = False
         self.menu = Menu(self, self.x, self.y, tlo_menu, 0)
-
+        self.zasieg = 100
     def rysuj(self, win):
         img= self.klatki[self.poziom]
         win.blit(img, (self.x-img.get_width()//2, self.y-img.get_height()//2))
@@ -43,3 +43,10 @@ class Tower:
         else:
             self.poziom=self.poziom
             self.obrazenia=self.obrazenia
+
+    def pokaz_zasieg_wiezy(self, okno):
+
+        if self.czy_wybrano == True:
+            powierzchnia = pygame.Surface((self.zasieg * 4, self.zasieg * 4), pygame.SRCALPHA, 32)
+            pygame.draw.circle(powierzchnia, (64,64,64,100), (self.zasieg, self.zasieg), self.zasieg, 0)
+            okno.blit(powierzchnia, (self.x - self.zasieg, self.y - self.zasieg))

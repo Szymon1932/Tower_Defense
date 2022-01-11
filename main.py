@@ -4,7 +4,7 @@ from enemies.cyber import Cyber
 from enemies.marshall import Marshall
 from enemies.barney import Barney
 from enemies.ted import Ted
-from towers.attackTower import AttackTower
+from towers.wiezaAtaku import WiezaAtaku, WiezaAtaku_2
 from menu import PauzaPrzycisk, MenuGry
 import time
 import random
@@ -29,7 +29,7 @@ class Main:
         self.tlo = pygame.image.load(os.path.join("resources", "map.png"))
         self.tlo = pygame.transform.scale(self.tlo, (self.szerokosc, self.wysokosc))
         self.wrogowie = []
-        self.wieze_ataku=[AttackTower(100,300)]
+        self.wieze_ataku=[WiezaAtaku(100, 300),WiezaAtaku_2(300,300)]
         self.wybrana_wieza = None
         self.stan_konta=100000
         self.pauza_przycisk = PauzaPrzycisk(przycisk_play, przycisk_pauza, self.szerokosc - przycisk_play.get_width() - 15, 15)
