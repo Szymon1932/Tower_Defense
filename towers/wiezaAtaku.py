@@ -1,6 +1,6 @@
 import pygame
 import os
-from .tower import Tower
+from .wieza import Wieza
 import math
 
 from menu import Menu
@@ -25,7 +25,7 @@ for x in range(0,10):
         (200, 100)))
 
 
-class WiezaAtaku(Tower):
+class WiezaAtaku(Wieza):
     def __init__(self,x,y):
         super().__init__(x,y)
         self.szerokosc=self.wysokosc=wymiary_obrazka
@@ -34,13 +34,12 @@ class WiezaAtaku(Tower):
         self.lucznik_klatka = 0
         self.menu = Menu(self, self.x, self.y, menu_tlo, [2000, 5000, "MAX"])
         self.menu.dodaj_nastepny_przycisk(przycisk_ulepszenie, "Ulepsz")
-        self.zasieg = 300
+        self.pierwotny_zasieg = self.zasieg = 200
         self.w_zasiegu = False
-        self.obrazenia = 1
+        self.pierwotne_obrazenia=self.obrazenia = 1
         self.czy_obrocony=True
 
-    def wartosc_ulepszenia(self):
-        return self.menu.pobierz_wartosc_obiektu()
+
 
     def rysuj(self, okno):
         super().pokaz_zasieg_wiezy(okno)
@@ -113,7 +112,7 @@ class WiezaAtaku_2(WiezaAtaku):
         self.lucznik_klatka = 0
         self.menu = Menu(self, self.x, self.y, menu_tlo, [2000, 5000, "MAX"])
         self.menu.dodaj_nastepny_przycisk(przycisk_ulepszenie, "Ulepsz")
-        self.zasieg = 150
+        self.pierwotny_zasieg = self.zasieg = 100
         self.w_zasiegu = False
-        self.obrazenia = 3
+        self.obrazenia=self.pierwotne_obrazenia = 2
         self.czy_obrocony=True

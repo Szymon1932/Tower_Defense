@@ -8,12 +8,13 @@ from towers.wiezaAtaku import WiezaAtaku, WiezaAtaku_2
 from menu import PauzaPrzycisk, MenuGry
 import time
 import random
+from towers.totem import TotemZasieg, TotemObrazenia
 
 pygame.font.init()
 
 przycisk_play = pygame.transform.scale(pygame.image.load(os.path.join("resources", "play.png")), (80, 80))
 przycisk_pauza = pygame.transform.scale(pygame.image.load(os.path.join("resources", "pause.png")), (80, 80))
-rundy=[[11,0,0,0],[1,0,0,0]]
+rundy=[[1,0,0,0],[1,0,0,0]]
 wymiar_ikony = 90
 obraz_menu = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (720, 180))
 kup_atak_1 = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_1.png")), (wymiar_ikony, wymiar_ikony))
@@ -29,12 +30,12 @@ class Main:
         self.tlo = pygame.image.load(os.path.join("resources", "map.png"))
         self.tlo = pygame.transform.scale(self.tlo, (self.szerokosc, self.wysokosc))
         self.wrogowie = []
-        self.wieze_ataku=[WiezaAtaku(100, 300),WiezaAtaku_2(300,300)]
+        self.wieze_ataku=[WiezaAtaku(300,300),WiezaAtaku_2(100,100)]
+        self.totemy=[TotemZasieg(350, 300),TotemObrazenia(250,300)]
         self.wybrana_wieza = None
         self.stan_konta=100000
         self.pauza_przycisk = PauzaPrzycisk(przycisk_play, przycisk_pauza, self.szerokosc - przycisk_play.get_width() - 15, 15)
         self.pauza=False
-        self.ilosc_wrogow=10
         self.runda = 0
         self.obecna_runda= rundy[self.runda][:]
         self.czas =time.time()
@@ -92,12 +93,20 @@ class Main:
                                     self.wybrana_wieza.ulepsz()
 
                     if wybrany_element==None:
+                        #czy kliknięto w wieze ataku
                         for wieza in self.wieze_ataku:
                             if wieza.czy_wcisniete(pos[0], pos[1]):
                                 wieza.czy_wybrano = True
                                 self.wybrana_wieza = wieza
                             else:
                                 wieza.czy_wybrano = False
+                        #czy kliknięto na totem
+                        for totem in self.totemy:
+                            if totem.czy_wcisniete(pos[0], pos[1]):
+                                totem.czy_wybrano = True
+                                self.wybrana_wieza = totem
+                            else:
+                                totem.czy_wybrano = False
 
 
             wrogowie_poza_mapa = []
@@ -112,6 +121,8 @@ class Main:
             for wieza in self.wieze_ataku:
                 self.stan_konta += wieza.atakuj(self.wrogowie)
 
+            for tw in self.totemy:
+                tw.dodaj_efekt(self.wieze_ataku)
 
 
             if self.zycia <=0:
@@ -128,6 +139,8 @@ class Main:
             e.rysuj(self.okno)
         #rysowanie wiez ataku
         for e in self.wieze_ataku:
+            e.rysuj(self.okno)
+        for e in self.totemy:
             e.rysuj(self.okno)
         #rysowanie pauzy
         self.pauza_przycisk.rysuj(self.okno)

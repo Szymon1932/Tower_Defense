@@ -20,9 +20,9 @@ class Cyber(Enemy):
         super().__init__()
         self.nazwa = "cyber"
         self.klatki = klatki[:]
-        self.maksymalne_zdrowie = 5
+        self.maksymalne_zdrowie = 14
         self.aktualne_zdrowie = self.maksymalne_zdrowie
-        self.predkosc = 4
+        self.predkosc = 2
         self.stan_konta=1
 
 
