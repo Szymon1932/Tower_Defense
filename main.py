@@ -9,18 +9,26 @@ from menu import PauzaPrzycisk, MenuGry
 import time
 import random
 from towers.totem import TotemZasieg, TotemObrazenia
-
 pygame.font.init()
+
+lista_obiektow = ["wieza_ataku", "wieza_ataku_2", "totem_obrazenia", "totem_zasieg"]
 
 przycisk_play = pygame.transform.scale(pygame.image.load(os.path.join("resources", "play.png")), (80, 80))
 przycisk_pauza = pygame.transform.scale(pygame.image.load(os.path.join("resources", "pause.png")), (80, 80))
 rundy=[[1,0,0,0],[1,0,0,0]]
 wymiar_ikony = 90
 obraz_menu = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (720, 180))
-kup_atak_1 = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_1.png")), (wymiar_ikony, wymiar_ikony))
-kup_atak_2 = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_2.png")), (wymiar_ikony, wymiar_ikony))
-kup_totem_1 = pygame.transform.scale(pygame.image.load(os.path.join("resources", "attack_totem.png")), (wymiar_ikony, wymiar_ikony))
-kup_totem_2= pygame.transform.scale(pygame.image.load(os.path.join("resources", "range_totem.png")), (wymiar_ikony, wymiar_ikony))
+wieza_ataku = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_1.png")), (wymiar_ikony, wymiar_ikony))
+wieza_ataku_2 = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_2.png")), (wymiar_ikony, wymiar_ikony))
+totem_obrazenia = pygame.transform.scale(pygame.image.load(os.path.join("resources", "attack_totem.png")), (wymiar_ikony, wymiar_ikony))
+totem_zasieg= pygame.transform.scale(pygame.image.load(os.path.join("resources", "range_totem.png")), (wymiar_ikony, wymiar_ikony))
+
+
+wieze_ataku=["wieza_ataku", "wieza_ataku_2"]
+totemy=["totem_obrazenia", "totem_zasieg"]
+sciezka = [(-10, 225), (19, 221), (313, 226), (315, 359), (695, 360), (696, 141), (984, 139), (986, 674), (811, 676),
+           (808, 495), (374, 494), (333, 479), (12, 479), (-25, 479)]
+
 
 class Main:
     def __init__(self):
@@ -30,8 +38,8 @@ class Main:
         self.tlo = pygame.image.load(os.path.join("resources", "map.png"))
         self.tlo = pygame.transform.scale(self.tlo, (self.szerokosc, self.wysokosc))
         self.wrogowie = []
-        self.wieze_ataku=[WiezaAtaku(300,300),WiezaAtaku_2(100,100)]
-        self.totemy=[TotemZasieg(350, 300),TotemObrazenia(250,300)]
+        self.wieze_ataku=[]
+        self.totemy=[]
         self.wybrana_wieza = None
         self.stan_konta=100000
         self.pauza_przycisk = PauzaPrzycisk(przycisk_play, przycisk_pauza, self.szerokosc - przycisk_play.get_width() - 15, 15)
@@ -41,11 +49,11 @@ class Main:
         self.czas =time.time()
         self.zycia = 4
         self.menu = MenuGry(obraz_menu.get_width() / 2 + 25, 675, obraz_menu)
-        self.menu.dodaj_nastepny_przycisk(kup_atak_1, "kup_atak_1", 1500)
-        self.menu.dodaj_nastepny_przycisk(kup_atak_2, "kup_atak_2", 2000)
-        self.menu.dodaj_nastepny_przycisk(kup_totem_1, "kup_totem_1", 1200)
-        self.menu.dodaj_nastepny_przycisk(kup_totem_2, "kup_totem_2", 1000)
-
+        self.menu.dodaj_nastepny_przycisk(wieza_ataku, "wieza_ataku", 1500)
+        self.menu.dodaj_nastepny_przycisk(wieza_ataku_2, "wieza_ataku_2", 2000)
+        self.menu.dodaj_nastepny_przycisk(totem_obrazenia, "totem_obrazenia", 1200)
+        self.menu.dodaj_nastepny_przycisk(totem_zasieg, "totem_zasieg", 1000)
+        self.obiekt_z_menu=None
     def stworzenie_wrogow(self):
 
         if sum(self.obecna_runda) == 0:
@@ -76,37 +84,75 @@ class Main:
                     self.stworzenie_wrogow()
 
             pos = pygame.mouse.get_pos()
+            if self.obiekt_z_menu:
+                czy_kolizja = False
+                self.obiekt_z_menu.przeniesienie(pos[0], pos[1])
+                wieze = self.wieze_ataku[:]
+                wieze += self.totemy[:]
+                for w in wieze:
+                    if w.kolizja(self.obiekt_z_menu):
+                        czy_kolizja = True
+                        w.kolor_wiezy = (255, 14, 12, 100)
+                        self.obiekt_z_menu.kolor_wiezy = (255, 14, 12, 100)
+                    else:
+                        w.kolor_wiezy = (12, 255, 14, 100)
+                        if not czy_kolizja:
+                            self.obiekt_z_menu.kolor_wiezy = (12, 255, 14, 100)
+
             for e in pygame.event.get():
                 if e.type == pygame.QUIT:
                     dzialanie = False
                 if e.type == pygame.MOUSEBUTTONUP:
-                    wybrany_element = None
-                    if self.wybrana_wieza: #wybrano wieze
-                        wybrany_element = self.wybrana_wieza.menu.wcisniecie_przyciskow_w_menu(pos[0], pos[1])
-                        if wybrany_element:
-                            if wybrany_element == 'Ulepsz':
-                                koszt = self.wybrana_wieza.wartosc_ulepszenia()
-                                print(koszt)
-                                if self.stan_konta >= koszt:
-                                    print(self.stan_konta)
-                                    self.stan_konta -= koszt
-                                    self.wybrana_wieza.ulepsz()
+                    if self.obiekt_z_menu:
+                        czy_postawic_obiekt = True
+                        wieze = self.wieze_ataku[:]
+                        wieze += self.totemy[:]
+                        for w in wieze:
+                            if w.kolizja(self.obiekt_z_menu):
+                                czy_postawic_obiekt = False
 
-                    if wybrany_element==None:
-                        #czy kliknięto w wieze ataku
-                        for wieza in self.wieze_ataku:
-                            if wieza.czy_wcisniete(pos[0], pos[1]):
-                                wieza.czy_wybrano = True
-                                self.wybrana_wieza = wieza
-                            else:
-                                wieza.czy_wybrano = False
-                        #czy kliknięto na totem
-                        for totem in self.totemy:
-                            if totem.czy_wcisniete(pos[0], pos[1]):
-                                totem.czy_wybrano = True
-                                self.wybrana_wieza = totem
-                            else:
-                                totem.czy_wybrano = False
+                        if czy_postawic_obiekt:
+                            if self.obiekt_z_menu.nazwa in wieze_ataku:
+                                self.wieze_ataku.append(self.obiekt_z_menu)
+                            elif self.obiekt_z_menu.nazwa in totemy:
+                                self.totemy.append(self.obiekt_z_menu)
+                            self.obiekt_z_menu = None
+
+                    else:
+                        ikonka_menu = self.menu.wcisniecie_ikony(pos[0], pos[1])
+                        if ikonka_menu:
+                            cost = self.menu.pobierz_wartosc_obiektu(ikonka_menu)
+                            if self.stan_konta >= cost:
+                                self.stan_konta -= cost
+                                self.dodaj_wieze(ikonka_menu)
+
+                        wybrany_element = None
+                        if self.wybrana_wieza: #wybrano wieze
+                            wybrany_element = self.wybrana_wieza.menu.wcisniecie_przyciskow_w_menu(pos[0], pos[1])
+                            if wybrany_element:
+                                if wybrany_element == 'Ulepsz':
+                                    koszt = self.wybrana_wieza.wartosc_ulepszenia()
+                                    print(koszt)
+                                    if self.stan_konta >= koszt:
+                                        print(self.stan_konta)
+                                        self.stan_konta -= koszt
+                                        self.wybrana_wieza.ulepsz()
+
+                        if wybrany_element==None:
+                            #czy kliknięto w wieze ataku
+                            for wieza in self.wieze_ataku:
+                                if wieza.czy_wcisniete(pos[0], pos[1]):
+                                    wieza.czy_wybrano = True
+                                    self.wybrana_wieza = wieza
+                                else:
+                                    wieza.czy_wybrano = False
+                            #czy kliknięto na totem
+                            for totem in self.totemy:
+                                if totem.czy_wcisniete(pos[0], pos[1]):
+                                    totem.czy_wybrano = True
+                                    self.wybrana_wieza = totem
+                                else:
+                                    totem.czy_wybrano = False
 
 
             wrogowie_poza_mapa = []
@@ -134,6 +180,14 @@ class Main:
         pygame.quit()
     def rysuj(self):
         self.okno.blit(self.tlo, (0, 0))
+        if self.obiekt_z_menu:
+            for e in self.wieze_ataku:
+                e.wydzielenie_obszaru(self.okno)
+                e.rysuj(self.okno)
+            for e in self.totemy:
+                e.wydzielenie_obszaru(self.okno)
+                e.rysuj(self.okno)
+            self.obiekt_z_menu.wydzielenie_obszaru(self.okno)
         #rysowanie wrogów
         for e in self.wrogowie:
             e.rysuj(self.okno)
@@ -142,11 +196,21 @@ class Main:
             e.rysuj(self.okno)
         for e in self.totemy:
             e.rysuj(self.okno)
+
+        if self.obiekt_z_menu:
+            self.obiekt_z_menu.rysuj(self.okno)
+
         #rysowanie pauzy
         self.pauza_przycisk.rysuj(self.okno)
         #rysowanie menu
         self.menu.rysuj(self.okno)
         pygame.display.update()
+
+    def dodaj_wieze(self, nazwa):
+        x,y = pygame.mouse.get_pos()
+        dostepne_obiekty = [WiezaAtaku(x, y), WiezaAtaku_2(x, y), TotemObrazenia(x, y), TotemZasieg(x, y)]
+        temp = dostepne_obiekty[lista_obiektow.index(nazwa)]
+        self.obiekt_z_menu = temp
 
 main = Main()
 main.dzialanie()

@@ -1,10 +1,10 @@
 import pygame
 import os
 from menu import Menu
-
+import math
 tlo_menu = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (150, 80))
 ulepszenie_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "upgrade.png")), (50, 50))
-
+promien_kola_wiezy=35
 
 
 
@@ -22,6 +22,7 @@ class Wieza:
         self.menu.dodaj_nastepny_przycisk(ulepszenie_tlo, "Ulepsz")
         self.zasieg_pierwotny=self.zasieg = 100
         self.pierwotne_obrazenia=self.obrazenia = 1
+        self.kolor_wiezy = (12, 255, 14, 100)
     def rysuj(self, win):
         img= self.klatki[self.poziom]
         win.blit(img, (self.x-img.get_width()//2, self.y-img.get_height()//2))
@@ -36,12 +37,10 @@ class Wieza:
         return False
 
     def ulepsz(self):
-        print(len(self.klatki))
         if self.poziom +1 < len(self.klatki):
             self.poziom+=1
             self.obrazenia +=1
             self.pierwotne_obrazenia+= 1
-            print(self.klatki)
         else:
             self.poziom=self.poziom
             self.obrazenia=self.obrazenia
@@ -50,9 +49,27 @@ class Wieza:
     def pokaz_zasieg_wiezy(self, okno):
 
         if self.czy_wybrano == True:
-            powierzchnia = pygame.Surface((self.zasieg * 4, self.zasieg * 4), pygame.SRCALPHA, 32)
+            powierzchnia = pygame.Surface((self.zasieg * 4, self.zasieg * 4), pygame.SRCALPHA)
             pygame.draw.circle(powierzchnia, (64,64,64,100), (self.zasieg, self.zasieg), self.zasieg, 0)
             okno.blit(powierzchnia, (self.x - self.zasieg, self.y - self.zasieg))
 
     def wartosc_ulepszenia(self):
         return self.menu.pobierz_wartosc_obiektu()
+
+
+    def kolizja (self, wieza_2):
+        odleglosc = math.sqrt((wieza_2.x-self.x)**2 + (wieza_2.y - self.y) **2)
+        if odleglosc >=promien_kola_wiezy*2:
+            return False
+        elif odleglosc < promien_kola_wiezy*2:
+            return True
+
+    def wydzielenie_obszaru(self, okno):
+        powierzchnia = pygame.Surface((self.zasieg * 4, self.zasieg * 4), pygame.SRCALPHA)
+        pygame.draw.circle(powierzchnia, self.kolor_wiezy, (promien_kola_wiezy,promien_kola_wiezy), promien_kola_wiezy, 0)
+        okno.blit(powierzchnia, (self.x - promien_kola_wiezy, self.y - promien_kola_wiezy))
+
+    def przeniesienie(self, x, y):
+        self.menu.x = self.x = x
+        self.menu.y = self.y = y
+        self.menu.update()

@@ -30,7 +30,7 @@ class WiezaAtaku(Wieza):
         super().__init__(x,y)
         self.szerokosc=self.wysokosc=wymiary_obrazka
         self.klatki=klatki_wieza_atakujaca
-        self.lucznik_klatki = lucznik_klatki
+        self.lucznik_klatki = lucznik_klatki[:]
         self.lucznik_klatka = 0
         self.menu = Menu(self, self.x, self.y, menu_tlo, [2000, 5000, "MAX"])
         self.menu.dodaj_nastepny_przycisk(przycisk_ulepszenie, "Ulepsz")
@@ -38,7 +38,7 @@ class WiezaAtaku(Wieza):
         self.w_zasiegu = False
         self.pierwotne_obrazenia=self.obrazenia = 1
         self.czy_obrocony=True
-
+        self.nazwa="wieza_ataku"
 
 
     def rysuj(self, okno):
@@ -116,3 +116,4 @@ class WiezaAtaku_2(WiezaAtaku):
         self.w_zasiegu = False
         self.obrazenia=self.pierwotne_obrazenia = 2
         self.czy_obrocony=True
+        self.nazwa = "wieza_ataku_2"

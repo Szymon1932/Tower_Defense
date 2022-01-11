@@ -17,6 +17,7 @@ class TotemZasieg(Wieza):
         self.szerokosc=self.wysokosc=wymiary_obrazka
         self.zasieg = 75
         self.wzmocnienie = 0.25
+        self.nazwa="totem_zasieg"
 
     def rysuj(self, okno):
         super().pokaz_zasieg_wiezy(okno)
@@ -44,6 +45,7 @@ class TotemObrazenia(TotemZasieg):
         self.wzmocnienie = 2
         self.szerokosc=self.wysokosc=wymiary_obrazka
         self.klatki = totem_obrazenia
+        self.nazwa="totem_obrazenia"
 
     def dodaj_efekt(self, wieze_ataku):
         wzmocnione = []
@@ -54,5 +56,4 @@ class TotemObrazenia(TotemZasieg):
             if zasieg <= self.zasieg + w.wysokosc / 2:
                 wzmocnione.append(w)
         for w in wzmocnione:
-            print(w.obrazenia)
             w.obrazenia = w.pierwotne_obrazenia * self.wzmocnienie

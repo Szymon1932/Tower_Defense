@@ -5,14 +5,16 @@ import os
 gwiazda_ulepszenie = pygame.transform.scale(pygame.image.load(os.path.join("resources", "star.png")), (50, 50))
 gwiazda_ulepszenie_mniejsza = pygame.transform.scale(pygame.image.load(os.path.join("resources", "star.png")), (27, 27))
 
+korekta_x = 60
+korekta_y = 90
 class Przycisk:
     def __init__(self, menu, img, nazwa):
         self.nazwa = nazwa
         self.img = img
         self.szerokosc = self.img.get_width()
         self.wysokosc = self.img.get_height()
-        self.x = menu.x - 60
-        self.y = menu.y - 90
+        self.x = menu.x - korekta_x
+        self.y = menu.y - korekta_y
         self.menu = menu
 
     def czy_wcisniete(self, X, Y):
@@ -23,6 +25,14 @@ class Przycisk:
 
     def rysuj(self, okno):
         okno.blit(self.img, (self.x, self.y))
+
+    def update(self):
+        """
+        updates menu position
+        :return: none
+        """
+        self.x = self.menu.x - korekta_x
+        self.y = self.menu.y - korekta_y
 
 class PauzaPrzycisk(Przycisk):
     def __init__(self,przycisk_play,przycisk_pauza,x,y):
@@ -90,14 +100,29 @@ class Menu:
             if Y<=self.y + self.wysokosc and Y >=self.y:
                 return True
         return False
-
-    def wcisniecie_przyciskow_w_menu(self, X, Y):
+    def wcisniecie_ikony(self, X, Y):
+        """
+        return the clicked item from the menu
+        :param X: int
+        :param Y: int
+        :return: str
+        """
         for btn in self.przyciski:
-            if btn.czy_wcisniete(X, Y):
+            if btn.czy_wcisniete(X,Y):
                 return btn.nazwa
         return None
 
-class MenuGry:
+    def wcisniecie_przyciskow_w_menu(self, X, Y):
+        for p in self.przyciski:
+            if p.czy_wcisniete(X, Y):
+                return p.nazwa
+        return None
+
+    def update(self):
+        """update menu and btn location"""
+        for btn in self.przyciski:
+            btn.update()
+class MenuGry(Menu):
     def __init__(self, x, y, img):
         self.x=x
         self.y=y
