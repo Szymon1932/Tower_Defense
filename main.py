@@ -9,13 +9,14 @@ from menu import PauzaPrzycisk, MenuGry
 import time
 import random
 from towers.totem import TotemZasieg, TotemObrazenia
+import math
 pygame.font.init()
 
 lista_obiektow = ["wieza_ataku", "wieza_ataku_2", "totem_obrazenia", "totem_zasieg"]
 
 przycisk_play = pygame.transform.scale(pygame.image.load(os.path.join("resources", "play.png")), (80, 80))
 przycisk_pauza = pygame.transform.scale(pygame.image.load(os.path.join("resources", "pause.png")), (80, 80))
-rundy=[[1,0,0,0],[1,0,0,0]]
+rundy=[[1,0,0,0],[1,0,0,10]]
 wymiar_ikony = 90
 obraz_menu = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (720, 180))
 wieza_ataku = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_1.png")), (wymiar_ikony, wymiar_ikony))
@@ -28,7 +29,7 @@ wieze_ataku=["wieza_ataku", "wieza_ataku_2"]
 totemy=["totem_obrazenia", "totem_zasieg"]
 sciezka = [(-10, 225), (19, 221), (313, 226), (315, 359), (695, 360), (696, 141), (984, 139), (986, 674), (811, 676),
            (808, 495), (374, 494), (333, 479), (12, 479), (-25, 479)]
-
+sciezka_n = [(11, 220),(100,220),(200,220), (309, 228), (308, 354),(400,354),(500,354),(600,354), (690, 354),(690,254), (694, 146),(794, 146),(894, 146), (978, 147),(978, 247),(978, 347),(978, 447),(978, 547), (979, 678), (814, 679),(814, 579), (807, 505),(707, 505),(607, 505),(507, 505), (374, 502), (337, 480), (237, 480),(137, 480),(10, 479)]
 konto_ikona = pygame.transform.scale(pygame.image.load(os.path.join("resources", "star.png")), (60, 60))
 zycie_ikona = pygame.transform.scale(pygame.image.load(os.path.join("resources", "heart.png")), (64, 64))
 runda_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (150, 70))
@@ -47,7 +48,7 @@ class Main:
         self.wieze_ataku=[]
         self.totemy=[]
         self.wybrana_wieza = None
-        self.stan_konta=7000
+        self.stan_konta=789554564
         self.pauza_przycisk = PauzaPrzycisk(przycisk_play, przycisk_pauza, self.szerokosc - przycisk_play.get_width() - 15, 15)
         self.pauza=False
         self.pauza_przycisk.pauza=self.pauza
@@ -63,6 +64,7 @@ class Main:
         self.obiekt_z_menu=None
         self.menu_font = pygame.font.SysFont("comicsans", font_wielkosc)
         self.zycie_konto_font = pygame.font.SysFont("comicsans", font_ikony)
+        self.sciezka_n=[]
     def stworzenie_wrogow(self):
 
         if sum(self.obecna_runda) == 0:
@@ -94,10 +96,18 @@ class Main:
 
             pos = pygame.mouse.get_pos()
             if self.obiekt_z_menu:
+                self.bliskosc_do_sciezki(self.obiekt_z_menu)
                 czy_kolizja = False
                 self.obiekt_z_menu.przeniesienie(pos[0], pos[1])
                 wieze = self.wieze_ataku[:]
                 wieze += self.totemy[:]
+
+                if self.bliskosc_do_sciezki(self.obiekt_z_menu):
+                    czy_kolizja = False
+                    self.obiekt_z_menu.kolor_wiezy = (14, 255, 12, 100)
+                elif not self.bliskosc_do_sciezki(self.obiekt_z_menu):
+                    czy_kolizja = True
+                    self.obiekt_z_menu.kolor_wiezy = (255, 14, 12, 100)
                 for w in wieze:
                     if w.kolizja(self.obiekt_z_menu):
                         czy_kolizja = True
@@ -108,11 +118,15 @@ class Main:
                         if not czy_kolizja:
                             self.obiekt_z_menu.kolor_wiezy = (12, 255, 14, 100)
 
+
             for e in pygame.event.get():
                 if e.type == pygame.QUIT:
                     dzialanie = False
                 if e.type == pygame.MOUSEBUTTONUP:
+                    self.sciezka_n.append(pos)
+                    print(self.sciezka_n)
                     if self.obiekt_z_menu:
+                        self.bliskosc_do_sciezki(self.obiekt_z_menu)
                         czy_postawic_obiekt = True
                         wieze = self.wieze_ataku[:]
                         wieze += self.totemy[:]
@@ -120,7 +134,7 @@ class Main:
                             if w.kolizja(self.obiekt_z_menu):
                                 czy_postawic_obiekt = False
 
-                        if czy_postawic_obiekt:
+                        if czy_postawic_obiekt and self.bliskosc_do_sciezki(self.obiekt_z_menu):
                             if self.obiekt_z_menu.nazwa in wieze_ataku:
                                 self.wieze_ataku.append(self.obiekt_z_menu)
                             elif self.obiekt_z_menu.nazwa in totemy:
@@ -248,6 +262,27 @@ class Main:
         dostepne_obiekty = [WiezaAtaku(x, y), WiezaAtaku_2(x, y), TotemObrazenia(x, y), TotemZasieg(x, y)]
         temp = dostepne_obiekty[lista_obiektow.index(nazwa)]
         self.obiekt_z_menu = temp
+
+    def bliskosc_do_sciezki(self, przenoszona_wieza):
+        bliskie_elementy = []
+        for p in sciezka_n:
+            odleglosc = math.sqrt((przenoszona_wieza.x - p[0]) ** 2 + (przenoszona_wieza.y - p[1]) ** 2)
+            bliskie_elementy.append([odleglosc, p]) #wybieranie 2 punktów które są blisko wiezy
+
+        bliskie_elementy.sort(key=lambda o: o[0])
+        n_punkt_1 = bliskie_elementy[0][1]
+        n_punkt_2 = bliskie_elementy[1][1] #wybór najbliższych punktów
+
+        up = abs((n_punkt_2[0]-n_punkt_1[0]) * (n_punkt_1[1] - przenoszona_wieza.y) - (n_punkt_1[0] - przenoszona_wieza.x) * (n_punkt_2[1] - n_punkt_1[1]))
+        down = math.sqrt((n_punkt_2[0]-n_punkt_1[0])**2 +(n_punkt_2[1]-n_punkt_1[1])**2 )
+        odleglosc = up/down
+        print(odleglosc)
+        if(odleglosc<20):
+            przenoszona_wieza.kolor_wiezy = (255, 14, 12, 100)
+            return False
+        else:
+            przenoszona_wieza.kolor_wiezy = (14, 255, 12, 100)
+            return True
 
 main = Main()
 main.dzialanie()

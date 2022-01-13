@@ -64,6 +64,8 @@ class Wieza:
         elif odleglosc < promien_kola_wiezy*2:
             return True
 
+
+
     def wydzielenie_obszaru(self, okno):
         powierzchnia = pygame.Surface((self.zasieg * 4, self.zasieg * 4), pygame.SRCALPHA)
         pygame.draw.circle(powierzchnia, self.kolor_wiezy, (promien_kola_wiezy,promien_kola_wiezy), promien_kola_wiezy, 0)
