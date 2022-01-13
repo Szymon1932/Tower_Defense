@@ -29,7 +29,13 @@ totemy=["totem_obrazenia", "totem_zasieg"]
 sciezka = [(-10, 225), (19, 221), (313, 226), (315, 359), (695, 360), (696, 141), (984, 139), (986, 674), (811, 676),
            (808, 495), (374, 494), (333, 479), (12, 479), (-25, 479)]
 
-
+konto_ikona = pygame.transform.scale(pygame.image.load(os.path.join("resources", "star.png")), (60, 60))
+zycie_ikona = pygame.transform.scale(pygame.image.load(os.path.join("resources", "heart.png")), (64, 64))
+runda_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (150, 70))
+zycie_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (110, 70))
+konto_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (200, 70))
+font_wielkosc = 40
+font_ikony = 50
 class Main:
     def __init__(self):
         self.szerokosc = 1200
@@ -41,19 +47,21 @@ class Main:
         self.wieze_ataku=[]
         self.totemy=[]
         self.wybrana_wieza = None
-        self.stan_konta=100000
+        self.stan_konta=7000
         self.pauza_przycisk = PauzaPrzycisk(przycisk_play, przycisk_pauza, self.szerokosc - przycisk_play.get_width() - 15, 15)
         self.pauza=False
         self.runda = 0
         self.obecna_runda= rundy[self.runda][:]
         self.czas =time.time()
-        self.zycia = 4
+        self.zycia = 10
         self.menu = MenuGry(obraz_menu.get_width() / 2 + 25, 675, obraz_menu)
         self.menu.dodaj_nastepny_przycisk(wieza_ataku, "wieza_ataku", 1500)
         self.menu.dodaj_nastepny_przycisk(wieza_ataku_2, "wieza_ataku_2", 2000)
         self.menu.dodaj_nastepny_przycisk(totem_obrazenia, "totem_obrazenia", 1200)
         self.menu.dodaj_nastepny_przycisk(totem_zasieg, "totem_zasieg", 1000)
         self.obiekt_z_menu=None
+        self.menu_font = pygame.font.SysFont("comicsans", font_wielkosc)
+        self.zycie_konto_font = pygame.font.SysFont("comicsans", font_ikony)
     def stworzenie_wrogow(self):
 
         if sum(self.obecna_runda) == 0:
@@ -204,6 +212,29 @@ class Main:
         self.pauza_przycisk.rysuj(self.okno)
         #rysowanie menu
         self.menu.rysuj(self.okno)
+
+        #runda
+        tekst = self.menu_font.render("Runda " + str(self.runda), True, (255, 255, 255))
+        runda_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (20+tekst.get_width(), 70))
+        self.okno.blit(runda_tlo, (10, 10))
+        self.okno.blit(tekst, (20, 15))
+        odl_pom = 10 + runda_tlo.get_width() + 10
+
+        #zycia
+        tekst = self.zycie_konto_font.render(str(self.zycia), True, (255, 255, 255))
+        zycie_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (80+tekst.get_width(), 70))
+        self.okno.blit(zycie_tlo, (odl_pom, 10))
+        self.okno.blit(zycie_ikona, (odl_pom, 14))
+        self.okno.blit(tekst, (odl_pom + zycie_ikona.get_width(), 8))
+
+        #stan konta
+        odl_pom += zycie_tlo.get_width() + 10
+        tekst = self.zycie_konto_font.render(str(self.stan_konta), True, (255, 255, 255))
+        konto_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (80+tekst.get_width(), 70))
+        self.okno.blit(konto_tlo, (odl_pom, 10))
+        self.okno.blit(konto_ikona, (odl_pom, 14))
+        self.okno.blit(tekst, (odl_pom + konto_ikona.get_width(), 8))
+
         pygame.display.update()
 
     def dodaj_wieze(self, nazwa):
