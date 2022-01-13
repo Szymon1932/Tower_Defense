@@ -50,6 +50,7 @@ class Main:
         self.stan_konta=7000
         self.pauza_przycisk = PauzaPrzycisk(przycisk_play, przycisk_pauza, self.szerokosc - przycisk_play.get_width() - 15, 15)
         self.pauza=False
+        self.pauza_przycisk.pauza=self.pauza
         self.runda = 0
         self.obecna_runda= rundy[self.runda][:]
         self.czas =time.time()
@@ -127,6 +128,9 @@ class Main:
                             self.obiekt_z_menu = None
 
                     else:
+                        if self.pauza_przycisk.czy_wcisniete(pos[0],pos[1]):
+                            self.pauza = not(self.pauza)
+                            self.pauza_przycisk.pauza = self.pauza
                         ikonka_menu = self.menu.wcisniecie_ikony(pos[0], pos[1])
                         if ikonka_menu:
                             cost = self.menu.pobierz_wartosc_obiektu(ikonka_menu)
@@ -164,24 +168,26 @@ class Main:
 
 
             wrogowie_poza_mapa = []
-            for e in self.wrogowie:
-                if e.x<-20:
-                    wrogowie_poza_mapa.append(e)
-                    self.zycia -= 1
-                    print("Aktualne zycia: "+ str(self.zycia))
-            for e in wrogowie_poza_mapa:
-                self.wrogowie.remove(e)
+            if not self.pauza:
+                for e in self.wrogowie:
+                    e.ruch()
+                    if e.x<-20:
+                        wrogowie_poza_mapa.append(e)
+                        self.zycia -= 1
+                        print("Aktualne zycia: "+ str(self.zycia))
+                for e in wrogowie_poza_mapa:
+                    self.wrogowie.remove(e)
 
-            for wieza in self.wieze_ataku:
-                self.stan_konta += wieza.atakuj(self.wrogowie)
+                for wieza in self.wieze_ataku:
+                    self.stan_konta += wieza.atakuj(self.wrogowie)
 
-            for tw in self.totemy:
-                tw.dodaj_efekt(self.wieze_ataku)
+                for tw in self.totemy:
+                    tw.dodaj_efekt(self.wieze_ataku)
 
 
-            if self.zycia <=0:
-                print("Przegrana")
-                exit(0)
+                if self.zycia <=0:
+                    print("Przegrana")
+                    exit(0)
 
 
             self.rysuj()

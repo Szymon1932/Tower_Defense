@@ -35,16 +35,17 @@ class Enemy:
 
     def rysuj(self, okno):
         self.klatka = self.klatki[self.aktualna_klatka]
-        self.aktualna_klatka += 1
-        if self.aktualna_klatka >= len(self.klatki):
-            self.aktualna_klatka = 0
 
         okno.blit(self.klatka, (self.x - self.klatka.get_width() / 2, self.y - self.klatka.get_height() / 2))
         self.pokaz_zdrowie(okno)
-        self.ruch()
+
 
 
     def ruch(self):
+
+        self.aktualna_klatka += 1
+        if self.aktualna_klatka >= len(self.klatki):
+            self.aktualna_klatka = 0
         x1, y1 = self.sciezka[self.aktualna_sciezka]
         x2, y2 = self.sciezka[self.aktualna_sciezka + 1]
 

@@ -44,16 +44,17 @@ class WiezaAtaku(Wieza):
     def rysuj(self, okno):
         super().pokaz_zasieg_wiezy(okno)
         super().rysuj(okno)
+
+        lucznik = self.lucznik_klatki[self.lucznik_klatka//synchronizacja_klatek]
+        okno.blit(lucznik, ((self.x - lucznik.get_width() / 2 - 5), (self.y - lucznik.get_height() - 15)))
+
+    def atakuj(self, wrogowie):
         if self.w_zasiegu:
             self.lucznik_klatka += 1
             if self.lucznik_klatka >= len(self.lucznik_klatki)*synchronizacja_klatek:
                 self.lucznik_klatka = 0
         else:
             self.lucznik_klatka = 0
-        lucznik = self.lucznik_klatki[self.lucznik_klatka//synchronizacja_klatek]
-        okno.blit(lucznik, ((self.x - lucznik.get_width() / 2 - 5), (self.y - lucznik.get_height() - 15)))
-
-    def atakuj(self, wrogowie):
         stan_konta=0
         self.w_zasiegu = False
         wrogowie_tab = []

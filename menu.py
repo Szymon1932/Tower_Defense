@@ -43,7 +43,7 @@ class PauzaPrzycisk(Przycisk):
         self.wysokosc = self.img.get_height()
         self.przycisk_play = przycisk_play
         self.przycisk_pauza = przycisk_pauza
-        self.pauza=True
+        self.pauza=False
 
     def rysuj(self, okno):
         if self.pauza:
