@@ -16,7 +16,12 @@ lista_obiektow = ["wieza_ataku", "wieza_ataku_2", "totem_obrazenia", "totem_zasi
 
 przycisk_play = pygame.transform.scale(pygame.image.load(os.path.join("resources", "play.png")), (80, 80))
 przycisk_pauza = pygame.transform.scale(pygame.image.load(os.path.join("resources", "pause.png")), (80, 80))
-rundy=[[1,0,0,0],[10,0,0,10]]
+restart_przycisk = pygame.transform.scale(pygame.image.load(os.path.join("resources", "reload.png")), (80, 80))
+rundy=[
+    [1,0,0,0],
+    [0,1,0,0],
+    [0,0,1,0]
+]
 wymiar_ikony = 90
 obraz_menu = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (720, 180))
 wieza_ataku = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_1.png")), (wymiar_ikony, wymiar_ikony))
@@ -37,6 +42,8 @@ zycie_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "
 konto_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (200, 70))
 font_wielkosc = 40
 font_ikony = 50
+stan_konta_pocz = 7500
+zdrowie_pocz = 1
 class Main:
     def __init__(self):
         self.szerokosc = 1200
@@ -48,14 +55,15 @@ class Main:
         self.wieze_ataku=[]
         self.totemy=[]
         self.wybrana_wieza = None
-        self.stan_konta=789554564
+        self.stan_konta=stan_konta_pocz
         self.pauza_przycisk = PauzaPrzycisk(przycisk_play, przycisk_pauza, self.szerokosc - przycisk_play.get_width() - 15, 15)
+        self.restart_przycisk = PauzaPrzycisk(restart_przycisk, restart_przycisk, self.szerokosc - przycisk_play.get_width() - 15, restart_przycisk.get_height() + 30 )
         self.pauza=False
         self.pauza_przycisk.pauza=self.pauza
-        self.runda = 1
+        self.runda = 0
         self.obecna_runda= rundy[self.runda][:]
         self.czas =time.time()
-        self.zycia = 2
+        self.zycia = zdrowie_pocz
         self.menu = MenuGry(obraz_menu.get_width() / 2 + 25, 675, obraz_menu)
         self.menu.dodaj_nastepny_przycisk(wieza_ataku, "wieza_ataku", 1500)
         self.menu.dodaj_nastepny_przycisk(wieza_ataku_2, "wieza_ataku_2", 2000)
@@ -72,14 +80,15 @@ class Main:
             if len(self.wrogowie) == 0:
                 self.runda += 1
                 if self.runda >= len(rundy):
-                    print("Koniec gry")
-                    exit(0)
-                self.obecna_runda = rundy[self.runda]
-
+                    self.restart = True
+                    return False
+                else:
+                    self.obecna_runda = rundy[self.runda]
 
         else:
             obecni_wrogowie = [Cyber(), Barney(),Marshall(),Ted()]
             for e in range(len(self.obecna_runda)):
+                print(self.obecna_runda)
                 if self.obecna_runda[e] != 0:
                     self.wrogowie.append(obecni_wrogowie[e])
                     self.obecna_runda[e] = self.obecna_runda[e] - 1
@@ -91,8 +100,27 @@ class Main:
 
         while dzialanie:
             zegar.tick(60)
+            if self.restart:
+                self.pauza=True
+                self.pauza_przycisk.pauza=True
+                while len(self.wrogowie) != 0:
+                    for e in self.wrogowie:
+                        self.wrogowie.remove(e)
+                while len(self.totemy) != 0:
+                    for e in self.totemy:
+                        self.totemy.remove(e)
+                while len(self.wieze_ataku) != 0:
+                    for e in self.wieze_ataku:
+                        self.wieze_ataku.remove(e)
+                self.restart = False
+                self.stan_konta = stan_konta_pocz
+                self.zycia = zdrowie_pocz
+                self.runda = 0
+                self.obecna_runda= rundy[self.runda][:]
+
+
             if self.pauza==False:
-                if time.time() - self.czas >= random.randrange(1, 2): #generowanie stworów co okreslony losowy czas
+                if time.time() - self.czas >= random.randrange(1, 30)/4: #generowanie stworów co okreslony losowy czas
                     self.czas = time.time()
                     self.stworzenie_wrogow()
 
@@ -125,8 +153,9 @@ class Main:
                 if e.type == pygame.QUIT:
                     dzialanie = False
                 if e.type == pygame.MOUSEBUTTONUP:
+                    if self.restart_przycisk.czy_wcisniete(pos[0],pos[1]):
+                        self.restart=True
                     self.sciezka_n.append(pos)
-                    print(self.sciezka_n)
                     if self.obiekt_z_menu:
                         self.bliskosc_do_sciezki(self.obiekt_z_menu)
                         czy_postawic_obiekt = True
@@ -160,9 +189,7 @@ class Main:
                             if wybrany_element:
                                 if wybrany_element == 'Ulepsz':
                                     koszt = self.wybrana_wieza.wartosc_ulepszenia()
-                                    print(koszt)
                                     if self.stan_konta >= koszt:
-                                        print(self.stan_konta)
                                         self.stan_konta -= koszt
                                         self.wybrana_wieza.ulepsz()
 
@@ -190,9 +217,6 @@ class Main:
                     if e.x<-15:
                         wrogowie_poza_mapa.append(e)
                         self.zycia -= 1
-                        print("Aktualne zycia: "+ str(self.zycia))
-                        if self.zycia<=0:
-                            self.rysuj()
                 for e in wrogowie_poza_mapa:
                     self.wrogowie.remove(e)
 
@@ -211,6 +235,7 @@ class Main:
             self.rysuj()
         pygame.quit()
     def rysuj(self):
+
         self.okno.blit(self.tlo, (0, 0))
         if self.obiekt_z_menu:
             for e in self.wieze_ataku:
@@ -234,6 +259,7 @@ class Main:
 
         #rysowanie pauzy
         self.pauza_przycisk.rysuj(self.okno)
+        self.restart_przycisk.rysuj(self.okno)
         #rysowanie menu
         self.menu.rysuj(self.okno)
 
@@ -264,19 +290,13 @@ class Main:
             self.okno.blit(zycie_tlo, (odl_pom, 10))
             self.okno.blit(zycie_ikona, (odl_pom, 14))
             self.okno.blit(tekst, (odl_pom + zycie_ikona.get_width(), 8))
-
-            # stan konta
-            odl_pom += zycie_tlo.get_width() + 10
-            tekst = self.zycie_konto_font.render(str(self.stan_konta), True, (255, 255, 255))
-            konto_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")),
-                                               (80 + tekst.get_width(), 70))
-            self.okno.blit(konto_tlo, (odl_pom, 10))
-            self.okno.blit(konto_ikona, (odl_pom, 14))
-            self.okno.blit(tekst, (odl_pom + konto_ikona.get_width(), 8))
-            self.restart=True
             pygame.display.update()
-            time.sleep(2)
-            exit(0)
+            print("komunikat")
+            self.pauza=True
+            self.pauza_przycisk.pauza=True
+            time.sleep(1.5)
+            self.restart=True
+
         #stan konta
         odl_pom += zycie_tlo.get_width() + 10
         tekst = self.zycie_konto_font.render(str(self.stan_konta), True, (255, 255, 255))
@@ -306,8 +326,7 @@ class Main:
         up = abs((n_punkt_2[0]-n_punkt_1[0]) * (n_punkt_1[1] - przenoszona_wieza.y) - (n_punkt_1[0] - przenoszona_wieza.x) * (n_punkt_2[1] - n_punkt_1[1]))
         down = math.sqrt((n_punkt_2[0]-n_punkt_1[0])**2 +(n_punkt_2[1]-n_punkt_1[1])**2 )
         odleglosc = up/down
-        print(odleglosc)
-        if(odleglosc<25):
+        if(odleglosc<28):
             przenoszona_wieza.kolor_wiezy = (255, 14, 12, 100)
             return False
         else:

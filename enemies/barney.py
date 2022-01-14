@@ -20,8 +20,8 @@ class Barney(Enemy):
         super().__init__()
         self.nazwa = "barney"
         self.klatki = klatki[:]
-        self.maksymalne_zdrowie = 5
+        self.maksymalne_zdrowie = 7
         self.aktualne_zdrowie = self.maksymalne_zdrowie
-        self.predkosc = 2
-        self.stan_konta=1
+        self.predkosc = 1.1
+        self.stan_konta=300
 
