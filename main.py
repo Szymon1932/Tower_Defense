@@ -16,7 +16,7 @@ lista_obiektow = ["wieza_ataku", "wieza_ataku_2", "totem_obrazenia", "totem_zasi
 
 przycisk_play = pygame.transform.scale(pygame.image.load(os.path.join("resources", "play.png")), (80, 80))
 przycisk_pauza = pygame.transform.scale(pygame.image.load(os.path.join("resources", "pause.png")), (80, 80))
-rundy=[[1,0,0,0],[1,0,0,10]]
+rundy=[[1,0,0,0],[10,0,0,10]]
 wymiar_ikony = 90
 obraz_menu = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (720, 180))
 wieza_ataku = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_1.png")), (wymiar_ikony, wymiar_ikony))
@@ -52,10 +52,10 @@ class Main:
         self.pauza_przycisk = PauzaPrzycisk(przycisk_play, przycisk_pauza, self.szerokosc - przycisk_play.get_width() - 15, 15)
         self.pauza=False
         self.pauza_przycisk.pauza=self.pauza
-        self.runda = 0
+        self.runda = 1
         self.obecna_runda= rundy[self.runda][:]
         self.czas =time.time()
-        self.zycia = 10
+        self.zycia = 2
         self.menu = MenuGry(obraz_menu.get_width() / 2 + 25, 675, obraz_menu)
         self.menu.dodaj_nastepny_przycisk(wieza_ataku, "wieza_ataku", 1500)
         self.menu.dodaj_nastepny_przycisk(wieza_ataku_2, "wieza_ataku_2", 2000)
@@ -65,6 +65,7 @@ class Main:
         self.menu_font = pygame.font.SysFont("comicsans", font_wielkosc)
         self.zycie_konto_font = pygame.font.SysFont("comicsans", font_ikony)
         self.sciezka_n=[]
+        self.restart=False
     def stworzenie_wrogow(self):
 
         if sum(self.obecna_runda) == 0:
@@ -87,6 +88,7 @@ class Main:
     def dzialanie(self):
         dzialanie = True
         zegar = pygame.time.Clock()
+
         while dzialanie:
             zegar.tick(60)
             if self.pauza==False:
@@ -185,10 +187,12 @@ class Main:
             if not self.pauza:
                 for e in self.wrogowie:
                     e.ruch()
-                    if e.x<-20:
+                    if e.x<-15:
                         wrogowie_poza_mapa.append(e)
                         self.zycia -= 1
                         print("Aktualne zycia: "+ str(self.zycia))
+                        if self.zycia<=0:
+                            self.rysuj()
                 for e in wrogowie_poza_mapa:
                     self.wrogowie.remove(e)
 
@@ -199,9 +203,9 @@ class Main:
                     tw.dodaj_efekt(self.wieze_ataku)
 
 
-                if self.zycia <=0:
-                    print("Przegrana")
-                    exit(0)
+               # if self.zycia <=0:
+                #    print("Przegrana")
+                 #   exit(0)
 
 
             self.rysuj()
@@ -234,19 +238,45 @@ class Main:
         self.menu.rysuj(self.okno)
 
         #runda
-        tekst = self.menu_font.render("Runda " + str(self.runda), True, (255, 255, 255))
-        runda_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (20+tekst.get_width(), 70))
-        self.okno.blit(runda_tlo, (10, 10))
-        self.okno.blit(tekst, (20, 15))
-        odl_pom = 10 + runda_tlo.get_width() + 10
+        if self.zycia>0:
+            tekst = self.menu_font.render("Runda " + str(self.runda), True, (255, 255, 255))
+            runda_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (20+tekst.get_width(), 70))
+            self.okno.blit(runda_tlo, (10, 10))
+            odl_pom = 10 + runda_tlo.get_width() + 10
+            self.okno.blit(tekst, (20, 15))
+            #zycia
+            tekst = self.zycie_konto_font.render(str(self.zycia), True, (255, 255, 255))
+            zycie_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (80+tekst.get_width(), 70))
+            self.okno.blit(zycie_tlo, (odl_pom, 10))
+            self.okno.blit(zycie_ikona, (odl_pom, 14))
+            self.okno.blit(tekst, (odl_pom + zycie_ikona.get_width(), 8))
+        else:
+            tekst = self.menu_font.render("Przegrana", True, (255, 255, 255))
+            runda_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")),
+                                               (20 + tekst.get_width(), 70))
+            self.okno.blit(runda_tlo, (10, 10))
+            odl_pom = 10 + runda_tlo.get_width() + 10
+            self.okno.blit(tekst, (14, 11))
+            # zycia
+            tekst = self.zycie_konto_font.render(str(self.zycia), True, (255, 255, 255))
+            zycie_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")),
+                                               (80 + tekst.get_width(), 70))
+            self.okno.blit(zycie_tlo, (odl_pom, 10))
+            self.okno.blit(zycie_ikona, (odl_pom, 14))
+            self.okno.blit(tekst, (odl_pom + zycie_ikona.get_width(), 8))
 
-        #zycia
-        tekst = self.zycie_konto_font.render(str(self.zycia), True, (255, 255, 255))
-        zycie_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (80+tekst.get_width(), 70))
-        self.okno.blit(zycie_tlo, (odl_pom, 10))
-        self.okno.blit(zycie_ikona, (odl_pom, 14))
-        self.okno.blit(tekst, (odl_pom + zycie_ikona.get_width(), 8))
-
+            # stan konta
+            odl_pom += zycie_tlo.get_width() + 10
+            tekst = self.zycie_konto_font.render(str(self.stan_konta), True, (255, 255, 255))
+            konto_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")),
+                                               (80 + tekst.get_width(), 70))
+            self.okno.blit(konto_tlo, (odl_pom, 10))
+            self.okno.blit(konto_ikona, (odl_pom, 14))
+            self.okno.blit(tekst, (odl_pom + konto_ikona.get_width(), 8))
+            self.restart=True
+            pygame.display.update()
+            time.sleep(2)
+            exit(0)
         #stan konta
         odl_pom += zycie_tlo.get_width() + 10
         tekst = self.zycie_konto_font.render(str(self.stan_konta), True, (255, 255, 255))
@@ -277,7 +307,7 @@ class Main:
         down = math.sqrt((n_punkt_2[0]-n_punkt_1[0])**2 +(n_punkt_2[1]-n_punkt_1[1])**2 )
         odleglosc = up/down
         print(odleglosc)
-        if(odleglosc<20):
+        if(odleglosc<25):
             przenoszona_wieza.kolor_wiezy = (255, 14, 12, 100)
             return False
         else:

@@ -9,7 +9,7 @@ class Enemy:
         self.wysokosc = 64
         self.aktualne_zdrowie = 1
         self.maksymalne_zdrowie = 0
-        self.sciezka = [(-10, 225), (19, 221), (313, 226), (315, 359), (695, 360), (696, 141), (984, 139), (986, 674), (811, 676), (808, 495), (374, 494), (333, 479),(12, 479), (-25, 479)]
+        self.sciezka = [(-10, 225), (19, 221), (313, 226), (315, 359), (695, 360), (696, 141), (984, 139), (986, 674), (811, 676), (808, 495), (374, 494), (333, 479),(12, 479), (-35, 479)]
         self.aktualna_sciezka = 0
         self.x = self.sciezka[0][0]
         self.y = self.sciezka[0][1]
@@ -47,6 +47,7 @@ class Enemy:
         if self.aktualna_klatka >= len(self.klatki):
             self.aktualna_klatka = 0
         x1, y1 = self.sciezka[self.aktualna_sciezka]
+        print(self.aktualna_sciezka)
         x2, y2 = self.sciezka[self.aktualna_sciezka + 1]
 
         wektor = ((x2 - x1), (y2 - y1))
