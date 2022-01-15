@@ -70,6 +70,7 @@ class Main:
         self.zycie_konto_font = pygame.font.SysFont("comicsans", self.font_ikony)
         self.sciezka_n=[]
         self.restart=False
+        self.dzialanie_wyjscie = False
 
     def stworzenie_wrogow(self):
 
@@ -134,7 +135,7 @@ class Main:
                     if self.restart_przycisk.czy_wcisniete(pos[0],pos[1]):
                         self.reset()
                     if self.wyjscie_przycisk.czy_wcisniete(pos[0],pos[1]):
-                        dzialanie = False
+                        self.dzialanie_wyjscie = True
                     if self.obiekt_z_menu:
                         self.bliskosc_do_sciezki(self.obiekt_z_menu)
                         czy_postawic_obiekt = True
@@ -271,7 +272,14 @@ class Main:
             tekst2 = self.zycie_konto_font.render(str(self.zycia), True, (255, 255, 255))
             zycie_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")),
                                                (80 + tekst2.get_width(), 70))
+        if self.dzialanie_wyjscie:
+            tekst = self.menu_font.render("Koniec", True, (255, 255, 255))
+            runda_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")),
+                                               (20 + tekst.get_width(), 70))
 
+            tekst2 = self.zycie_konto_font.render(str(self.zycia), True, (255, 255, 255))
+            zycie_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")),
+                                               (80 + tekst2.get_width(), 70))
         odl_pom = 10 + runda_tlo.get_width() + 10
         self.okno.blit(runda_tlo, (10, 10))
         self.okno.blit(tekst, (14, 11))
@@ -289,10 +297,14 @@ class Main:
 
         if (self.zycia>0 and self.runda >= len(self.rundy)) or self.zycia<0:
             pygame.display.update()
-            self.pauza = True
-            self.pauza_przycisk.pauza = True
             time.sleep(4)
             self.reset()
+        elif self.dzialanie_wyjscie:
+            pygame.display.update()
+            self.pauza = True
+            self.pauza_przycisk.pauza = True
+            time.sleep(2)
+            exit(0)
         pygame.display.update()
 
     def dodaj_wieze(self, nazwa):
