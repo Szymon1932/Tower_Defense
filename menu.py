@@ -5,16 +5,17 @@ import os
 gwiazda_ulepszenie = pygame.transform.scale(pygame.image.load(os.path.join("resources", "star.png")), (50, 50))
 gwiazda_ulepszenie_mniejsza = pygame.transform.scale(pygame.image.load(os.path.join("resources", "star.png")), (27, 27))
 
-korekta_x = 60
-korekta_y = 90
+
 class Przycisk:
     def __init__(self, menu, img, nazwa):
+        self.korekta_x = 60
+        self.korekta_y = 90
         self.nazwa = nazwa
         self.img = img
         self.szerokosc = self.img.get_width()
         self.wysokosc = self.img.get_height()
-        self.x = menu.x - korekta_x
-        self.y = menu.y - korekta_y
+        self.x = menu.x - self.korekta_x
+        self.y = menu.y - self.korekta_y
         self.menu = menu
 
     def czy_wcisniete(self, X, Y):
@@ -26,13 +27,9 @@ class Przycisk:
     def rysuj(self, okno):
         okno.blit(self.img, (self.x, self.y))
 
-    def update(self):
-        """
-        updates menu position
-        :return: none
-        """
-        self.x = self.menu.x - korekta_x
-        self.y = self.menu.y - korekta_y
+    def zmiana_pol(self):
+        self.x = self.menu.x - self.korekta_x
+        self.y = self.menu.y - self.korekta_y
 
 class PauzaPrzycisk(Przycisk):
     def __init__(self,przycisk_play,przycisk_pauza,x,y):
@@ -101,12 +98,6 @@ class Menu:
                 return True
         return False
     def wcisniecie_ikony(self, X, Y):
-        """
-        return the clicked item from the menu
-        :param X: int
-        :param Y: int
-        :return: str
-        """
         for btn in self.przyciski:
             if btn.czy_wcisniete(X,Y):
                 return btn.nazwa
@@ -118,10 +109,9 @@ class Menu:
                 return p.nazwa
         return None
 
-    def update(self):
-        """update menu and btn location"""
-        for btn in self.przyciski:
-            btn.update()
+    def zmiana_pol(self):
+        for przycisk in self.przyciski:
+            przycisk.zmiana_pol()
 class MenuGry(Menu):
     def __init__(self, x, y, img):
         self.x=x
@@ -135,7 +125,7 @@ class MenuGry(Menu):
 
     def dodaj_nastepny_przycisk(self, img, name,cost):
         self.ilosc_przyciskow +=1
-        przycisk_x = self.x -325 +(self.ilosc_przyciskow-1)*180
+        przycisk_x = self.x - 325 +(self.ilosc_przyciskow-1)*180
         przycisk_y = self.y-75
         self.przyciski.append(PrzyciskMenu(przycisk_x, przycisk_y, img, name, cost))
 
@@ -153,7 +143,6 @@ class MenuGry(Menu):
 
 
     def pobierz_wartosc_obiektu(self,nazwa):
-
         for przycisk in self.przyciski:
             if przycisk.nazwa == nazwa:
                 return przycisk.koszt

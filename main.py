@@ -18,7 +18,7 @@ przycisk_play = pygame.transform.scale(pygame.image.load(os.path.join("resources
 przycisk_pauza = pygame.transform.scale(pygame.image.load(os.path.join("resources", "pause.png")), (80, 80))
 restart_przycisk = pygame.transform.scale(pygame.image.load(os.path.join("resources", "reload.png")), (80, 80))
 rundy=[
-    [1,0,0,0],
+    [0,3,0,0],
     [1,0,0,0],
 ]
 wymiar_ikony = 90
