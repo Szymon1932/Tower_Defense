@@ -13,6 +13,6 @@ class PauzaPrzycisk(Przycisk):
 
     def rysuj(self, okno):
         if self.pauza:
-            okno.blit(self.przycisk_play, (self.x, self.y))
-        else:
             okno.blit(self.przycisk_pauza, (self.x, self.y))
+        else:
+            okno.blit(self.przycisk_play, (self.x, self.y))

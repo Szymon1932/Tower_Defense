@@ -1,3 +1,4 @@
+
 import pygame
 import os
 from enemies.cyber import Cyber
@@ -13,13 +14,18 @@ import random
 from towers.totemZasieg import TotemZasieg
 from towers.totemObrazenia import TotemObrazenia
 import math
+
+pygame.init()
 pygame.font.init()
 
+pygame.mixer.music.load(os.path.join("resources","music.mp3"))
+#Sound from Zapsplat.com
 przycisk_play = pygame.transform.scale(pygame.image.load(os.path.join("resources", "play.png")), (80, 80))
 przycisk_pauza = pygame.transform.scale(pygame.image.load(os.path.join("resources", "pause.png")), (80, 80))
 restart_przycisk = pygame.transform.scale(pygame.image.load(os.path.join("resources", "reload.png")), (80, 80))
 wyjscie_przycisk = pygame.transform.scale(pygame.image.load(os.path.join("resources", "remove.png")), (80, 80))
-
+dzwiek_przycisk_on =pygame.transform.scale(pygame.image.load(os.path.join("resources", "button_sound.png")), (80, 80))
+dzwiek_przycisk_off =pygame.transform.scale(pygame.image.load(os.path.join("resources", "button_sound_off.png")), (80, 80))
 obraz_menu = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (720, 180))
 konto_ikona = pygame.transform.scale(pygame.image.load(os.path.join("resources", "star.png")), (60, 60))
 zycie_ikona = pygame.transform.scale(pygame.image.load(os.path.join("resources", "heart.png")), (64, 64))
@@ -53,7 +59,7 @@ class Main:
         self.pauza_przycisk = PauzaPrzycisk(przycisk_play, przycisk_pauza, self.szerokosc - przycisk_play.get_width() - 15, 15)
         self.restart_przycisk = PauzaPrzycisk(restart_przycisk, restart_przycisk, self.szerokosc - restart_przycisk.get_width() - 15, restart_przycisk.get_height() + 30 )
         self.wyjscie_przycisk = PauzaPrzycisk(wyjscie_przycisk, wyjscie_przycisk, self.szerokosc - wyjscie_przycisk.get_width() - 15, wyjscie_przycisk.get_height() +restart_przycisk.get_height() + 45)
-
+        self.dzwiek_przycisk = PauzaPrzycisk(dzwiek_przycisk_on, dzwiek_przycisk_off, self.szerokosc - dzwiek_przycisk_on.get_width() - 15, wyjscie_przycisk.get_height() +restart_przycisk.get_height()+dzwiek_przycisk_on.get_height() + 60)
         self.pauza=False
         self.pauza_przycisk.pauza=self.pauza
         self.runda = 1
@@ -71,6 +77,7 @@ class Main:
         self.sciezka_n=[]
         self.restart=False
         self.dzialanie_wyjscie = False
+        self.muzyka_wyl = False
 
     def stworzenie_wrogow(self):
 
@@ -92,9 +99,9 @@ class Main:
                     break
 
     def dzialanie(self):
+        pygame.mixer.music.play(1)
         dzialanie = True
         zegar = pygame.time.Clock()
-
         while dzialanie:
             zegar.tick(60)
             if self.pauza==False:
@@ -103,6 +110,7 @@ class Main:
                     self.stworzenie_wrogow()
 
             pos = pygame.mouse.get_pos()
+
             if self.obiekt_z_menu:
                 self.bliskosc_do_sciezki(self.obiekt_z_menu)
                 czy_kolizja = False
@@ -153,6 +161,14 @@ class Main:
                             self.obiekt_z_menu = None
 
                     else:
+                        if self.dzwiek_przycisk.czy_wcisniete(pos[0], pos[1]):
+
+                            self.muzyka_wyl = not (self.muzyka_wyl)
+                            self.dzwiek_przycisk.pauza = self.muzyka_wyl
+                            if self.muzyka_wyl:
+                                pygame.mixer.music.pause()
+                            else:
+                                pygame.mixer.music.unpause()
                         if self.pauza_przycisk.czy_wcisniete(pos[0],pos[1]):
                             self.pauza = not(self.pauza)
                             self.pauza_przycisk.pauza = self.pauza
@@ -239,6 +255,8 @@ class Main:
         self.restart_przycisk.rysuj(self.okno)
 
         self.wyjscie_przycisk.rysuj(self.okno)
+
+        self.dzwiek_przycisk.rysuj(self.okno)
         #rysowanie menu
         self.menu.rysuj(self.okno)
 
