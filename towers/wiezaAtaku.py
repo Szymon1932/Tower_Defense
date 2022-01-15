@@ -24,7 +24,7 @@ for x in range(0,10):
 class WiezaAtaku(Wieza):
     def __init__(self,x,y):
         super().__init__(x,y)
-        self.synchronizacja_klatek = 4
+        self.synchronizacja_klatek = 2
         self.szerokosc=self.wysokosc=90
         self.klatki=klatki_wieza_atakujaca
         self.lucznik_klatki = lucznik_klatki[:]
