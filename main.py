@@ -12,39 +12,38 @@ from towers.totem import TotemZasieg, TotemObrazenia
 import math
 pygame.font.init()
 
-lista_obiektow = ["wieza_ataku", "wieza_ataku_2", "totem_obrazenia", "totem_zasieg"]
-
 przycisk_play = pygame.transform.scale(pygame.image.load(os.path.join("resources", "play.png")), (80, 80))
 przycisk_pauza = pygame.transform.scale(pygame.image.load(os.path.join("resources", "pause.png")), (80, 80))
 restart_przycisk = pygame.transform.scale(pygame.image.load(os.path.join("resources", "reload.png")), (80, 80))
-rundy=[
-    [0,3,0,0],
-    [1,0,0,0],
-]
-wymiar_ikony = 90
+
 obraz_menu = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (720, 180))
-wieza_ataku = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_1.png")), (wymiar_ikony, wymiar_ikony))
-wieza_ataku_2 = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_2.png")), (wymiar_ikony, wymiar_ikony))
-totem_obrazenia = pygame.transform.scale(pygame.image.load(os.path.join("resources", "attack_totem.png")), (wymiar_ikony, wymiar_ikony))
-totem_zasieg= pygame.transform.scale(pygame.image.load(os.path.join("resources", "range_totem.png")), (wymiar_ikony, wymiar_ikony))
-
-
-wieze_ataku=["wieza_ataku", "wieza_ataku_2"]
-totemy=["totem_obrazenia", "totem_zasieg"]
-sciezka = [(-10, 225), (19, 221), (313, 226), (315, 359), (695, 360), (696, 141), (984, 139), (986, 674), (811, 676),
-           (808, 495), (374, 494), (333, 479), (12, 479), (-25, 479)]
-sciezka_n = [(11, 220),(100,220),(200,220), (309, 228), (308, 354),(400,354),(500,354),(600,354), (690, 354),(690,254), (694, 146),(794, 146),(894, 146), (978, 147),(978, 247),(978, 347),(978, 447),(978, 547), (979, 678), (814, 679),(814, 579), (807, 505),(707, 505),(607, 505),(507, 505), (374, 502), (337, 480), (237, 480),(137, 480),(10, 479)]
+wieza_ataku = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_1.png")), (90, 90))
+wieza_ataku_2 = pygame.transform.scale(pygame.image.load(os.path.join("resources", "tower_attack_2.png")), (90, 90))
+totem_obrazenia = pygame.transform.scale(pygame.image.load(os.path.join("resources", "attack_totem.png")), (90, 90))
+totem_zasieg= pygame.transform.scale(pygame.image.load(os.path.join("resources", "range_totem.png")), (90, 90))
 konto_ikona = pygame.transform.scale(pygame.image.load(os.path.join("resources", "star.png")), (60, 60))
 zycie_ikona = pygame.transform.scale(pygame.image.load(os.path.join("resources", "heart.png")), (64, 64))
 runda_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (150, 70))
 zycie_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (110, 70))
 konto_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (200, 70))
-font_wielkosc = 40
-font_ikony = 50
-stan_konta_pocz = 7500
-zdrowie_pocz = 3
+
+
+sciezka_n = [(11, 220),(100,220),(200,220), (309, 228), (308, 354),(400,354),(500,354),(600,354), (690, 354),(690,254), (694, 146),(794, 146),(894, 146), (978, 147),(978, 247),(978, 347),(978, 447),(978, 547), (979, 678), (814, 679),(814, 579), (807, 505),(707, 505),(607, 505),(507, 505), (374, 502), (337, 480), (237, 480),(137, 480),(10, 479)]
+
+
 class Main:
     def __init__(self):
+        self.nazwa_wieze_ataku = ["wieza_ataku", "wieza_ataku_2"]
+        self.nazwa_totemy = ["totem_obrazenia", "totem_zasieg"]
+        self.rundy = [
+            [0, 3, 0, 0],
+            [1, 0, 0, 0],
+        ]
+        self.font_wielkosc = 40
+        self.font_ikony = 50
+        self.stan_konta_pocz = 7500
+        self.zdrowie_pocz = 3
+        self.lista_obiektow = ["wieza_ataku", "wieza_ataku_2", "totem_obrazenia", "totem_zasieg"]
         self.szerokosc = 1200
         self.wysokosc = 800
         self.okno = pygame.display.set_mode((self.szerokosc, self.wysokosc))
@@ -54,35 +53,36 @@ class Main:
         self.wieze_ataku=[]
         self.totemy=[]
         self.wybrana_wieza = None
-        self.stan_konta=stan_konta_pocz
+        self.stan_konta=self.stan_konta_pocz
         self.pauza_przycisk = PauzaPrzycisk(przycisk_play, przycisk_pauza, self.szerokosc - przycisk_play.get_width() - 15, 15)
         self.restart_przycisk = PauzaPrzycisk(restart_przycisk, restart_przycisk, self.szerokosc - przycisk_play.get_width() - 15, restart_przycisk.get_height() + 30 )
         self.pauza=False
         self.pauza_przycisk.pauza=self.pauza
         self.runda = 0
-        self.obecna_runda= rundy[self.runda][:]
+        self.obecna_runda= self.rundy[self.runda][:]
         self.czas =time.time()
-        self.zycia = zdrowie_pocz
+        self.zycia = self.zdrowie_pocz
         self.menu = MenuGry(obraz_menu.get_width() / 2 + 25, 675, obraz_menu)
         self.menu.dodaj_nastepny_przycisk(wieza_ataku, "wieza_ataku", 1500)
         self.menu.dodaj_nastepny_przycisk(wieza_ataku_2, "wieza_ataku_2", 2000)
         self.menu.dodaj_nastepny_przycisk(totem_obrazenia, "totem_obrazenia", 1200)
         self.menu.dodaj_nastepny_przycisk(totem_zasieg, "totem_zasieg", 1000)
         self.obiekt_z_menu=None
-        self.menu_font = pygame.font.SysFont("comicsans", font_wielkosc)
-        self.zycie_konto_font = pygame.font.SysFont("comicsans", font_ikony)
+        self.menu_font = pygame.font.SysFont("comicsans", self.font_wielkosc)
+        self.zycie_konto_font = pygame.font.SysFont("comicsans", self.font_ikony)
         self.sciezka_n=[]
         self.restart=False
+
     def stworzenie_wrogow(self):
 
         if sum(self.obecna_runda) == 0:
             if len(self.wrogowie) == 0:
                 self.runda += 1
-                if self.runda >= len(rundy):
+                if self.runda >= len(self.rundy):
                     self.rysuj()
 
                 else:
-                    self.obecna_runda = rundy[self.runda]
+                    self.obecna_runda = self.rundy[self.runda]
 
         else:
             obecni_wrogowie = [Cyber(), Barney(),Marshall(),Ted()]
@@ -172,9 +172,9 @@ class Main:
                                 czy_postawic_obiekt = False
 
                         if czy_postawic_obiekt and self.bliskosc_do_sciezki(self.obiekt_z_menu):
-                            if self.obiekt_z_menu.nazwa in wieze_ataku:
+                            if self.obiekt_z_menu.nazwa in self.nazwa_wieze_ataku:
                                 self.wieze_ataku.append(self.obiekt_z_menu)
-                            elif self.obiekt_z_menu.nazwa in totemy:
+                            elif self.obiekt_z_menu.nazwa in self.nazwa_totemy:
                                 self.totemy.append(self.obiekt_z_menu)
                             self.obiekt_z_menu = None
 
@@ -270,7 +270,7 @@ class Main:
         self.menu.rysuj(self.okno)
 
         #runda
-        if self.zycia>0 and self.runda < len(rundy):
+        if self.zycia>0 and self.runda < len(self.rundy):
             tekst = self.menu_font.render("Runda " + str(self.runda), True, (255, 255, 255))
             runda_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (20+tekst.get_width(), 70))
             self.okno.blit(runda_tlo, (10, 10))
@@ -282,7 +282,7 @@ class Main:
             self.okno.blit(zycie_tlo, (odl_pom, 10))
             self.okno.blit(zycie_ikona, (odl_pom, 14))
             self.okno.blit(tekst, (odl_pom + zycie_ikona.get_width(), 8))
-        elif self.zycia>0 and self.runda >= len(rundy):
+        elif self.zycia>0 and self.runda >= len(self.rundy):
             tekst = self.menu_font.render("Wygrana", True, (255, 255, 255))
             runda_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")),
                                                (20 + tekst.get_width(), 70))
@@ -337,7 +337,7 @@ class Main:
     def dodaj_wieze(self, nazwa):
         x,y = pygame.mouse.get_pos()
         dostepne_obiekty = [WiezaAtaku(x, y), WiezaAtaku_2(x, y), TotemObrazenia(x, y), TotemZasieg(x, y)]
-        temp = dostepne_obiekty[lista_obiektow.index(nazwa)]
+        temp = dostepne_obiekty[self.lista_obiektow.index(nazwa)]
         self.obiekt_z_menu = temp
 
     def bliskosc_do_sciezki(self, przenoszona_wieza):
