@@ -4,11 +4,14 @@ from enemies.cyber import Cyber
 from enemies.marshall import Marshall
 from enemies.barney import Barney
 from enemies.ted import Ted
-from towers.wiezaAtaku import WiezaAtaku, WiezaAtaku_2
-from menu import PauzaPrzycisk, MenuGry
+from towers.wiezaAtaku import WiezaAtaku
+from towers.wiezaAtaku import WiezaAtaku_2
+from menuGry import MenuGry
+from pauzaPrzycisk import PauzaPrzycisk
 import time
 import random
-from towers.totem import TotemZasieg, TotemObrazenia
+from towers.totemZasieg import TotemZasieg
+from towers.totemObrazenia import TotemObrazenia
 import math
 pygame.font.init()
 
@@ -24,8 +27,8 @@ totem_zasieg= pygame.transform.scale(pygame.image.load(os.path.join("resources",
 konto_ikona = pygame.transform.scale(pygame.image.load(os.path.join("resources", "star.png")), (60, 60))
 zycie_ikona = pygame.transform.scale(pygame.image.load(os.path.join("resources", "heart.png")), (64, 64))
 runda_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (150, 70))
-zycie_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (110, 70))
-konto_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (200, 70))
+zycie_tlo = pygame.transform.scale(runda_tlo, (110, 70))
+konto_tlo = pygame.transform.scale(runda_tlo, (200, 70))
 
 
 sciezka_n = [(11, 220),(100,220),(200,220), (309, 228), (308, 354),(400,354),(500,354),(600,354), (690, 354),(690,254), (694, 146),(794, 146),(894, 146), (978, 147),(978, 247),(978, 347),(978, 447),(978, 547), (979, 678), (814, 679),(814, 579), (807, 505),(707, 505),(607, 505),(507, 505), (374, 502), (337, 480), (237, 480),(137, 480),(10, 479)]

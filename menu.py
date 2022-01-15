@@ -1,63 +1,9 @@
 import pygame
 import os
-
+from przycisk import Przycisk
 
 gwiazda_ulepszenie = pygame.transform.scale(pygame.image.load(os.path.join("resources", "star.png")), (50, 50))
 gwiazda_ulepszenie_mniejsza = pygame.transform.scale(pygame.image.load(os.path.join("resources", "star.png")), (27, 27))
-
-
-class Przycisk:
-    def __init__(self, menu, img, nazwa):
-        self.korekta_x = 60
-        self.korekta_y = 90
-        self.nazwa = nazwa
-        self.img = img
-        self.szerokosc = self.img.get_width()
-        self.wysokosc = self.img.get_height()
-        self.x = menu.x - self.korekta_x
-        self.y = menu.y - self.korekta_y
-        self.menu = menu
-
-    def czy_wcisniete(self, X, Y):
-        if X <= self.x + self.szerokosc and X >= self.x:
-            if Y <= self.y + self.wysokosc and Y >= self.y:
-                return True
-        return False
-
-    def rysuj(self, okno):
-        okno.blit(self.img, (self.x, self.y))
-
-    def zmiana_pol(self):
-        self.x = self.menu.x - self.korekta_x
-        self.y = self.menu.y - self.korekta_y
-
-class PauzaPrzycisk(Przycisk):
-    def __init__(self,przycisk_play,przycisk_pauza,x,y):
-        self.x = x
-        self.y = y
-        self.img = przycisk_play
-        self.szerokosc = self.img.get_width()
-        self.wysokosc = self.img.get_height()
-        self.przycisk_play = przycisk_play
-        self.przycisk_pauza = przycisk_pauza
-        self.pauza=False
-
-    def rysuj(self, okno):
-        if self.pauza:
-            okno.blit(self.przycisk_play, (self.x, self.y))
-        else:
-            okno.blit(self.przycisk_pauza, (self.x, self.y))
-
-class PrzyciskMenu(Przycisk):
-    def __init__(self,x,y,img,nazwa,koszt):
-        self.nazwa = nazwa
-        self.img = img
-        self.szerokosc = self.img.get_width()
-        self.wysokosc = self.img.get_height()
-        self.x = x
-        self.y = y
-        self.koszt = koszt
-
 
 class Menu:
     def __init__(self, wieza, x, y, img, wartosc):
@@ -112,39 +58,3 @@ class Menu:
     def zmiana_pol(self):
         for przycisk in self.przyciski:
             przycisk.zmiana_pol()
-class MenuGry(Menu):
-    def __init__(self, x, y, img):
-        self.x=x
-        self.y=y
-        self.szerokosc = img.get_width()
-        self.wysokosc = img.get_height()
-        self.przyciski = []
-        self.ilosc_przyciskow = 0
-        self.font = pygame.font.SysFont("comicsans", 27)
-        self.tlo = img
-
-    def dodaj_nastepny_przycisk(self, img, name,cost):
-        self.ilosc_przyciskow +=1
-        przycisk_x = self.x - 325 +(self.ilosc_przyciskow-1)*180
-        przycisk_y = self.y-75
-        self.przyciski.append(PrzyciskMenu(przycisk_x, przycisk_y, img, name, cost))
-
-    def rysuj(self, okno):
-        okno.blit(self.tlo, (self.x - self.tlo.get_width() / 2, self.y - 100))
-        for przycisk in self.przyciski:
-            przycisk.rysuj(okno)
-            text = self.font.render(str(przycisk.koszt), True, (255, 255, 255))
-            wymiar_x = przycisk.x -8
-            wymiar_y = przycisk.y + przycisk.wysokosc + 8
-            okno.blit(gwiazda_ulepszenie_mniejsza, (wymiar_x, wymiar_y))
-            wymiar_x = przycisk.x + przycisk.szerokosc/2- text.get_width() / 2 + 7
-            wymiar_y = przycisk.y + przycisk.wysokosc +5
-            okno.blit(text, (wymiar_x, wymiar_y))
-
-
-    def pobierz_wartosc_obiektu(self,nazwa):
-        for przycisk in self.przyciski:
-            if przycisk.nazwa == nazwa:
-                return przycisk.koszt
-        return 0
-

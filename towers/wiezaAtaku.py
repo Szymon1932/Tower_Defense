@@ -2,10 +2,7 @@ import pygame
 import os
 from .wieza import Wieza
 import math
-
 from menu import Menu
-
-
 
 menu_tlo = pygame.transform.scale(pygame.image.load(os.path.join("resources", "menu.png")), (150, 80))
 przycisk_ulepszenie = pygame.transform.scale(pygame.image.load(os.path.join("resources", "upgrade.png")), (50, 50))
