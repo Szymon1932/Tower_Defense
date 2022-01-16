@@ -12,7 +12,7 @@ class TotemZasieg(Wieza):
             (self.wymiary_obrazka, self.wymiary_obrazka))]
         self.klatki = self.totem_zasieg[:]
         self.szerokosc=self.wysokosc=self.wymiary_obrazka
-        self.zasieg = 75
+        self.zasieg = 125
         self.wzmocnienie = 0.25
         self.nazwa="totem_zasieg"
 

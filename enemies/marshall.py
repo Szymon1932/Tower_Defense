@@ -20,8 +20,8 @@ class Marshall(Enemy):
         super().__init__()
         self.nazwa = "marshall"
         self.klatki = klatki[:]
-        self.maksymalne_zdrowie = 10
+        self.maksymalne_zdrowie = 7
         self.aktualne_zdrowie = self.maksymalne_zdrowie
-        self.predkosc = 1
-        self.stan_konta=400
+        self.predkosc = 2
+        self.stan_konta=300
 

@@ -20,8 +20,8 @@ class Ted(Enemy):
         super().__init__()
         self.nazwa = "ted"
         self.klatki = klatki[:]
-        self.maksymalne_zdrowie = 1
+        self.maksymalne_zdrowie = 5
         self.aktualne_zdrowie = self.maksymalne_zdrowie
-        self.predkosc = 3
-        self.stan_konta=100
+        self.predkosc = 2
+        self.stan_konta=200
 

@@ -9,7 +9,7 @@ class TotemObrazenia(TotemZasieg):
         self.totem_obrazenia = [pygame.transform.scale(
             pygame.image.load(os.path.join("resources/towers/totems", "1.png")),
             (self.wymiary_obrazka, self.wymiary_obrazka))]
-        self.range = 75
+        self.range = 125
         self.wzmocnienie = 2
         self.szerokosc=self.wysokosc=self.wymiary_obrazka
         self.klatki = self.totem_obrazenia
