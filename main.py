@@ -350,10 +350,10 @@ class Main:
         self.obiekt_z_menu = temp
 
     def bliskosc_do_sciezki(self, przenoszona_wieza):
-        sciezka_n = [(11, 220), (100, 220), (200, 220), (309, 228), (308, 354), (400, 354), (500, 354), (600, 354),
+        sciezka_n = [(11, 230), (100, 230), (200, 230), (309, 238), (308, 354), (400, 354), (500, 354), (575, 354),
                      (690, 354), (690, 254), (694, 146), (794, 146), (894, 146), (978, 147), (978, 247), (978, 347),
-                     (978, 447), (978, 547), (979, 678), (814, 679), (814, 579), (807, 505), (707, 505), (607, 505),
-                     (507, 505), (374, 502), (337, 480), (237, 480), (137, 480), (10, 479)]
+                     (978, 447), (978, 547), (979, 678),(900, 678), (814, 679), (814, 579), (807, 505), (707, 505), (625, 505),(525,505),
+                     (507, 505), (374, 502),  (237, 480),(87, 480), (-39, 480)  ]
 
         bliskie_elementy = []
         for p in sciezka_n:
@@ -363,12 +363,12 @@ class Main:
         bliskie_elementy.sort(key=lambda o: o[0])
         n_punkt_1 = bliskie_elementy[0][1]
         n_punkt_2 = bliskie_elementy[1][1]  # wybór najbliższych punktów
-
+        print(n_punkt_1,n_punkt_2)
         up = abs((n_punkt_2[0] - n_punkt_1[0]) * (n_punkt_1[1] - przenoszona_wieza.y) - (
                 n_punkt_1[0] - przenoszona_wieza.x) * (n_punkt_2[1] - n_punkt_1[1]))
         down = math.sqrt((n_punkt_2[0] - n_punkt_1[0]) ** 2 + (n_punkt_2[1] - n_punkt_1[1]) ** 2)
         odleglosc = up / down
-        if (odleglosc < 21):
+        if (odleglosc < 18):
             przenoszona_wieza.kolor_wiezy = (255, 14, 12, 100)
             return False
         else:
