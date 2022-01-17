@@ -2,7 +2,6 @@ from .enemy import Enemy
 import os
 import pygame
 
-
 klatki = []
 
 for x in range(20):
@@ -20,9 +19,7 @@ class Cyber(Enemy):
         super().__init__()
         self.nazwa = "cyber"
         self.klatki = klatki[:]
-        self.maksymalne_zdrowie =1
+        self.maksymalne_zdrowie = 1
         self.aktualne_zdrowie = self.maksymalne_zdrowie
         self.predkosc = 6
-        self.stan_konta=100
-
-
+        self.stan_konta = 100

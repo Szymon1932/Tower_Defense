@@ -2,7 +2,6 @@ from .enemy import Enemy
 import os
 import pygame
 
-
 klatki = []
 
 for x in range(20):
@@ -23,5 +22,4 @@ class Ted(Enemy):
         self.maksymalne_zdrowie = 5
         self.aktualne_zdrowie = self.maksymalne_zdrowie
         self.predkosc = 2
-        self.stan_konta=200
-
+        self.stan_konta = 200
