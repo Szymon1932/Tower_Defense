@@ -12,6 +12,7 @@ class Wieza:
         self.x = X
         self.y = Y
         self.szerokosc = 0
+        self.klatka=pygame.image.load(os.path.join("resources/towers/attack_2","1.png"))
         self.wysokosc = 0
         self.poziom = 0
         self.klatki = []

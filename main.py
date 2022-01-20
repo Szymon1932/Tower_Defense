@@ -352,23 +352,37 @@ class Main:
     def bliskosc_do_sciezki(self, przenoszona_wieza):
         sciezka_n = [(11, 230), (100, 230), (200, 230), (309, 238), (308, 354), (400, 354), (500, 354), (575, 354),
                      (690, 354), (690, 254), (694, 146), (794, 146), (894, 146), (978, 147), (978, 247), (978, 347),
-                     (978, 447), (978, 547), (979, 678),(900, 678), (814, 679), (814, 579), (807, 505), (707, 505), (625, 505),(525,505),
-                     (507, 505), (374, 502),  (237, 480),(87, 480), (-39, 480)  ]
+                     (978, 447), (978, 547), (979, 678),(900, 678), (814, 679), (814, 579), (807, 505),(757, 505), (707, 505), (625, 505),(575, 505),(525,505),
+                     (507, 505),(425, 502), (350, 502),(275, 502),  (237, 480),(137, 480),(87, 480), (-39, 480)  ]
 
         bliskie_elementy = []
-        for p in sciezka_n:
-            odleglosc = math.sqrt((przenoszona_wieza.x - p[0]) ** 2 + (przenoszona_wieza.y - p[1]) ** 2)
-            bliskie_elementy.append([odleglosc, p])  # wybieranie 2 punktów które są blisko wiezy
+        for i,p in enumerate(sciezka_n):
+            odleglosc = math.sqrt((przenoszona_wieza.x - p[0]) ** 2 + (przenoszona_wieza.y- p[1]) ** 2)
+            bliskie_elementy.append([odleglosc, p,i])  # wybieranie 2 punktów które są blisko wiezy
+
 
         bliskie_elementy.sort(key=lambda o: o[0])
+        index_drugi_najblizszy_element = 1
+        roznica_indeksow = bliskie_elementy[0][2] - bliskie_elementy[index_drugi_najblizszy_element][2]
         n_punkt_1 = bliskie_elementy[0][1]
-        n_punkt_2 = bliskie_elementy[1][1]  # wybór najbliższych punktów
-        print(n_punkt_1,n_punkt_2)
+
+        if roznica_indeksow<0:
+            while roznica_indeksow < -1:
+                index_drugi_najblizszy_element = index_drugi_najblizszy_element + 1
+                roznica_indeksow =  bliskie_elementy[0][2]-bliskie_elementy[index_drugi_najblizszy_element][2]
+            n_punkt_2 = bliskie_elementy[index_drugi_najblizszy_element][1]  # wybór najbliższych punktów
+        elif roznica_indeksow>0:
+            while roznica_indeksow > 1:
+                index_drugi_najblizszy_element = index_drugi_najblizszy_element + 1
+                roznica_indeksow =  bliskie_elementy[0][2]-bliskie_elementy[index_drugi_najblizszy_element][2]
+            n_punkt_2 = bliskie_elementy[index_drugi_najblizszy_element][1]  # wybór najbliższych punktów
+
         up = abs((n_punkt_2[0] - n_punkt_1[0]) * (n_punkt_1[1] - przenoszona_wieza.y) - (
                 n_punkt_1[0] - przenoszona_wieza.x) * (n_punkt_2[1] - n_punkt_1[1]))
         down = math.sqrt((n_punkt_2[0] - n_punkt_1[0]) ** 2 + (n_punkt_2[1] - n_punkt_1[1]) ** 2)
         odleglosc = up / down
-        if (odleglosc < 18):
+        print(odleglosc)
+        if (odleglosc < 42):
             przenoszona_wieza.kolor_wiezy = (255, 14, 12, 100)
             return False
         else:
